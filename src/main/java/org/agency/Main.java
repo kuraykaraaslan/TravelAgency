@@ -21,11 +21,15 @@ public class Main {
         return session;
     }
 
+    public static UserController getUserController() {
+        return userController;
+    }
+
     public static void main(String[] args) {
         try {
             session = new Session();
 
-            LoginView loginView = new LoginView("kuraykaraaslan", "admin");
+            LoginView loginView = new LoginView("admin", "admin");
 
             while (!session.isLoggedIn()) {
                 try {

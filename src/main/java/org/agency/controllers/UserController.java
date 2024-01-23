@@ -41,10 +41,6 @@ public class UserController {
     public void destroy(User user) {
         userDao.destroy(user);    }
 
-    public List<User> getAll() {
-        return userDao.getAll();
-    }
-
     // Additions
     public PaginatedResult<User> paginate(int page, int pageSize) {
         int offset = (page - 1) * pageSize;

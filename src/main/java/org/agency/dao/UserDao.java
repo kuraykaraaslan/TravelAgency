@@ -68,6 +68,7 @@ public class UserDao {
         user.setId(resultSet.getInt("id"));
         user.setName(resultSet.getString("name"));
         user.setUsername(resultSet.getString("username"));
+        user.setPassword(resultSet.getString("password"));
         user.setEmail(resultSet.getString("email"));
         user.setCreatedAt(resultSet.getDate("created_at"));
         user.setUpdatedAt(resultSet.getDate("updated_at"));
@@ -92,22 +93,6 @@ public class UserDao {
         }
 
         return null;
-    }
-
-    public List<User> getAll() {
-        List<User> users = new ArrayList<>();
-        String query = "SELECT * FROM users";
-
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
-            while (resultSet.next()) {
-                users.add(mapResultSetToUser(resultSet));
-            }
-        } catch (SQLException e) {
-            handleSQLException(e);
-        }
-
-        return users;
     }
 
     public boolean update(User user) {
@@ -268,6 +253,9 @@ public class UserDao {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
+                    if (resultSet.getDate("deleted_at") != null) {
+                        continue;
+                    }
                     users.add(mapResultSetToUser(resultSet));
                 }
             }

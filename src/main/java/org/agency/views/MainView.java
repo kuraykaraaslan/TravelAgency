@@ -12,7 +12,7 @@ public class MainView {
 
     public MainView() {
         frame = new JFrame("Travel Agency Main");
-        frame.setSize(400, 400);
+        frame.setSize(400, 420);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.getContentPane().setBackground(Color.WHITE); // Set frame background to white
@@ -65,6 +65,8 @@ public class MainView {
         hotelsButton.setPreferredSize(buttonSize);
         exitButton.setPreferredSize(buttonSize);
 
+        // Add action listeners to the buttons
+        usersButton.addActionListener(e -> new org.agency.views.user.ListView());
         exitButton.addActionListener(e -> System.exit(0));
 
         //if user is not admin, disable users and hotels buttons
@@ -88,6 +90,7 @@ public class MainView {
         //exits the program
         mainBox.add(Box.createVerticalStrut(10)); // Add vertical gap
         mainBox.add(exitButton);
+
 
         mainBox.add(Box.createVerticalGlue());
     }
