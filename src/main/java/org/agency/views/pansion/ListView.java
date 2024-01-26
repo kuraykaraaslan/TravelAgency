@@ -1,4 +1,4 @@
-package org.agency.views.user;
+package org.agency.views.pansion;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,12 +11,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.agency.Main;
-import org.agency.controllers.UserController;
+import org.agency.controllers.HotelController;
 import org.agency.core.PaginatedResult;
-import org.agency.entities.User;
+import org.agency.entities.Hotel;
 
 public class ListView extends Component {
-    private UserController userController = Main.getUserController();
+    private HotelController hotelController = Main.getHotelController();
     private JPanel mainPanel;
     private DefaultTableModel model;
     private static JTable table;
@@ -34,7 +34,7 @@ public class ListView extends Component {
     private JLabel pageNumberLabel;
 
     public ListView() {
-        JFrame frame = new JFrame("Users");
+        JFrame frame = new JFrame("Hotels");
         configureFrame(frame);
         mainPanel = new JPanel();
         placeComponents(mainPanel);
@@ -118,16 +118,20 @@ public class ListView extends Component {
     }
 
     private Object[][] getTableData() {
-        return userController.paginate(currentPage, itemsPerPage, searchTerm).getData().stream().map(user -> new Object[]{
-                user.getId(),
-                user.getUsername(),
-                user.getRole(),
-                user.getEmail()
+        return hotelController.paginate(currentPage, itemsPerPage, searchTerm).getData().stream().map(hotel -> new Object[]{
+                hotel.getId(),
+                hotel.getName(),
+                hotel.getPhone(),
+                hotel.getWebsite(),
+                hotel.getStarRating(),
+                hotel.getAddressFull(),
+                hotel.getAddressCity(),
+                hotel.getAddressCountry()
         }).toArray(Object[][]::new);
     }
 
     private String[] getColumnNames() {
-        return new String[]{"ID", "Username", "Role", "Email"};
+        return new String[]{"ID", "Name", "Phone", "Website", "Rating","Address", "City", "Country"};
     }
 
     private void handleTableRowSelection() {
@@ -141,8 +145,8 @@ public class ListView extends Component {
         currentPage = 1;
         this.searchTerm = searchTerm;
         try {
-            PaginatedResult<User> result = userController.paginate(currentPage, itemsPerPage, searchTerm);
-            updateTableData((ArrayList<User>) result.getData());
+            PaginatedResult<Hotel> result = hotelController.paginate(currentPage, itemsPerPage, searchTerm);
+            updateTableData((ArrayList<Hotel>) result.getData());
             totalItems = result.getTotal();
             totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
             paginationButtonRefresh();
@@ -156,12 +160,16 @@ public class ListView extends Component {
         doSearch(searchTerm);
     }
 
-    private void updateTableData(ArrayList<User> newData) {
-        Object[][] tableData = newData.stream().map(user -> new Object[]{
-                user.getId(),
-                user.getUsername(),
-                user.getRole(),
-                user.getEmail()
+    private void updateTableData(ArrayList<Hotel> newData) {
+        Object[][] tableData = newData.stream().map(hotel -> new Object[]{
+                hotel.getId(),
+                hotel.getName(),
+                hotel.getPhone(),
+                hotel.getWebsite(),
+                hotel.getStarRating(),
+                hotel.getAddressFull(),
+                hotel.getAddressCity(),
+                hotel.getAddressCountry()
         }).toArray(Object[][]::new);
 
         model.setDataVector(tableData, getColumnNames());
@@ -314,9 +322,9 @@ public class ListView extends Component {
     }
 
     private void handleCreateButtonClick() {
-        DetailsView detailsView = new DetailsView();
-        detailsView.setVisible(true);
-
+        //TODO: Open create view
+        //DetailsView detailsView = new DetailsView();
+        //detailsView.setVisible(true);
 
         doSearch(searchTerm);
     }
@@ -325,12 +333,12 @@ public class ListView extends Component {
         // GET SELECTED ROW
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
-            int userId = (int) table.getValueAt(selectedRow, 0);
-            User user = userController.getById(userId);
+            int hotelId = (int) table.getValueAt(selectedRow, 0);
+            Hotel hotel = hotelController.getById(hotelId);
             //CONFIRMATION
-            int dialogResult = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this user?", "Warning", JOptionPane.YES_NO_OPTION);
+            int dialogResult = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this hotel?", "Warning", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
-                userController.delete(user);
+                hotelController.delete(hotel);
                 doSearch(searchTerm);
             }
         }
@@ -340,9 +348,11 @@ public class ListView extends Component {
     {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
-            int userId = (int) table.getValueAt(selectedRow, 0);
-            User user = userController.getById(userId);
-            DetailsView detailsView = new DetailsView(user);
+            int hotelId = (int) table.getValueAt(selectedRow, 0);
+            Hotel hotel = hotelController.getById(hotelId);
+
+            //TODO: Open details view
+            //DetailsView detailsView = new DetailsView(hotel);
         }
     }
 

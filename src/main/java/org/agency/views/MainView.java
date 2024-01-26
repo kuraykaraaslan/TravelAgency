@@ -66,6 +66,7 @@ public class MainView {
         exitButton.setPreferredSize(buttonSize);
 
         // Add action listeners to the buttons
+        hotelsButton.addActionListener(e -> new org.agency.views.hotel.ListView());
         usersButton.addActionListener(e -> new org.agency.views.user.ListView());
         exitButton.addActionListener(e -> System.exit(0));
 

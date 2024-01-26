@@ -1,8 +1,11 @@
 package org.agency.controllers;
 
 import java.util.List;
+
+import org.agency.core.PaginatedResult;
 import org.agency.dao.HotelDao;
 import org.agency.entities.Hotel;
+import org.agency.entities.User;
 
 public class HotelController {
 
@@ -23,5 +26,27 @@ public class HotelController {
 
     public List<Hotel> getAll() {
         return hotelDao.getAll();
+    }
+
+    public void update(Hotel hotel) {
+        hotelDao.update(hotel);
+        System.out.println("Hotel updated successfully.");
+    }
+
+    public void delete(Hotel hotel) {
+        hotelDao.delete(hotel);
+        System.out.println("Hotel deleted successfully.");
+    }
+
+    public PaginatedResult<Hotel> paginate(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        int limit = offset + pageSize;
+        return hotelDao.paginate(offset, limit);
+    }
+
+    public PaginatedResult<Hotel> paginate(int page, int pageSize, String query) {
+        int offset = (page - 1) * pageSize;
+        int limit = offset + pageSize;
+        return hotelDao.paginate(offset, limit, query);
     }
 }

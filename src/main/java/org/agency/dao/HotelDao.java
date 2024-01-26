@@ -4,8 +4,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.agency.core.PaginatedResult;
 import org.agency.entities.Hotel;
 import org.agency.core.Database;
+import org.agency.entities.User;
+
 public class HotelDao {
 
     private Connection connection;
@@ -156,12 +159,13 @@ public class HotelDao {
         hotel.setPhone(resultSet.getString("phone"));
         hotel.setWebsite(resultSet.getString("website"));
         hotel.setEmail(resultSet.getString("email"));
+        /*
         hotel.setCreatedAt(resultSet.getDate("created_at"));
         hotel.setUpdatedAt(resultSet.getDate("updated_at"));
         hotel.setDeletedAt(resultSet.getDate("deleted_at"));
         hotel.setCreatedBy(resultSet.getInt("created_by"));
         hotel.setUpdatedBy(resultSet.getInt("updated_by"));
-        hotel.setDeletedBy(resultSet.getInt("deleted_by"));
+        hotel.setDeletedBy(resultSet.getInt("deleted_by"));*/
 
         return hotel;
     }
@@ -170,4 +174,71 @@ public class HotelDao {
         e.printStackTrace();
         // Handle exceptions as needed
     }
+
+    public PaginatedResult<Hotel> paginate(int offset, int limit, String keyword) {
+        List<Hotel> hotels = new ArrayList<>();
+
+        // Handle null keyword
+        if (keyword == null) {
+            keyword = "";
+        }
+
+        // Handle negative offset
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        String query = "SELECT * FROM hotels WHERE name LIKE ? OR address_full LIKE ? OR address_district LIKE ? OR address_city LIKE ? OR address_country LIKE ? LIMIT ? OFFSET ?";
+        String countQuery = "SELECT COUNT(*) FROM hotels WHERE name LIKE ? OR address_full LIKE ? OR address_district LIKE ? OR address_city LIKE ? OR address_country LIKE ?";
+
+        try (
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                PreparedStatement countStatement = connection.prepareStatement(countQuery)
+        ) {
+            preparedStatement.setString(1, "%" + keyword + "%");
+            preparedStatement.setString(2, "%" + keyword + "%");
+            preparedStatement.setString(3, "%" + keyword + "%");
+            preparedStatement.setString(4, "%" + keyword + "%");
+            preparedStatement.setString(5, "%" + keyword + "%");
+            preparedStatement.setInt(6, limit);
+            preparedStatement.setInt(7, offset);
+
+            countStatement.setString(1, "%" + keyword + "%");
+            countStatement.setString(2, "%" + keyword + "%");
+            countStatement.setString(3, "%" + keyword + "%");
+            countStatement.setString(4, "%" + keyword + "%");
+            countStatement.setString(5, "%" + keyword + "%");
+
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    if (resultSet.getDate("deleted_at") != null) {
+                        continue;
+                    }
+                    hotels.add(mapResultSetToHotel(resultSet));
+                }
+            }
+
+            // Calculate total count
+            int total = 0;
+            try (ResultSet countResultSet = countStatement.executeQuery()) {
+                if (countResultSet.next()) {
+                    total = countResultSet.getInt(1);
+                }
+            }
+
+            return new PaginatedResult<>(hotels, total);
+
+        } catch (SQLException e) {
+            handleSQLException(e);
+            // Handle the exception or rethrow it based on your application's logic
+        }
+
+        return null;
+    }
+
+    public PaginatedResult<Hotel> paginate(int offset, int limit) {
+        return paginate(offset, limit, null);
+    }
 }
+
