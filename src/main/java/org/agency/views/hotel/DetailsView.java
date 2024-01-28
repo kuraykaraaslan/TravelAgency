@@ -2,20 +2,30 @@ package org.agency.views.hotel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
+import org.agency.controllers.HotelController;
 import org.agency.entities.Hotel;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class DetailsView extends Component {
-    private JPanel mainPanel;
-    private DefaultTableModel model;
-    private static JTabbedPane tabbedPane;
+import org.agency.views.hotel.Partials.*;
 
+public class DetailsView extends Component {
+
+    private HotelController hotelController = new HotelController();
+    private JPanel mainPanel;
+    private static JTabbedPane tabbedPane;
     private Hotel hotel;
+
+    private JPanel detailsPanel;
+    private JPanel roomsPanel;
+    private JPanel seasonsPanel;
+
+    private JPanel pansionsPanel;
+
+    private JPanel reservationsPanel;
 
     private void configureFrame(JFrame frame) {
         frame.setSize(getHalfScreenSize());
@@ -45,86 +55,45 @@ public class DetailsView extends Component {
     private JTabbedPane createTabbedPane() {
         tabbedPane = new JTabbedPane();
         tabbedPane.setBackground(Color.white);
-        tabbedPane.addTab("Details", createDetailsPanel());
-        tabbedPane.addTab("Rooms", createRoomsPanel());
-        tabbedPane.addTab("Seasons", createSeasonsPanel());
+        createDetailsPanel();
+        createRoomsPanel();
+        createSeasonsPanel();
+        createReservationsPanel();
+        createPansionsPanel();
+        tabbedPane.addTab("Details", detailsPanel );
+        tabbedPane.addTab("Rooms", roomsPanel);
+        tabbedPane.addTab("Seasons", seasonsPanel);
+        tabbedPane.addTab("Pansions", pansionsPanel);
+        tabbedPane.addTab("Reservations", reservationsPanel);
 
         return tabbedPane;
     }
 
-    private JPanel createDetailsPanel() {
-        JPanel detailsPanel = new JPanel();
-        detailsPanel.setLayout(new GridLayout(0, 2));
-
-        // Name
-        JPanel namePanel = new JPanel();
-        namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.LINE_AXIS));
-        JLabel nameLabel = new JLabel("Name");
-        nameLabel.setPreferredSize(new Dimension(100, 20));
-        JTextField nameField = new JTextField("Hotel Name");
-
-        namePanel.add(nameLabel);
-        namePanel.add(nameField);
-
-        // Address
-        JPanel addressFullPanel = new JPanel();
-        addressFullPanel.setLayout(new BoxLayout(addressFullPanel, BoxLayout.LINE_AXIS));
-        JLabel addressFullLabel = new JLabel("Full");
-        addressFullLabel.setPreferredSize(new Dimension(100, 20));
-        JTextField addressFullField = new JTextField("Hotel Address Full");
-
-        addressFullPanel.add(addressFullLabel);
-        addressFullPanel.add(addressFullField);
-
-        JPanel addressDistrictPanel = new JPanel();
-        addressDistrictPanel.setLayout(new FlowLayout());
-        JLabel addressDistrictLabel = new JLabel("District");
-        addressDistrictLabel.setPreferredSize(new Dimension(100, 20));
-        JTextField addressDistrictField = new JTextField("Hotel Address District");
-        addressDistrictPanel.add(addressDistrictLabel);
-        addressDistrictPanel.add(addressDistrictField);
-
-        JPanel addressCityPanel = new JPanel();
-        addressCityPanel.setLayout(new GridLayout(0, 2));
-        addressCityPanel.setPreferredSize(new Dimension(200, 50)); // Set your preferred width and height
-
-        JLabel addressCityLabel = new JLabel("City");
-        addressCityLabel.setPreferredSize(new Dimension(100, 20));
-
-        JTextField addressCityField = new JTextField("Hotel Address City");
-        addressCityField.setPreferredSize(new Dimension(100, 20));
-
-        addressCityPanel.add(addressCityLabel);
-        addressCityPanel.add(addressCityField);
-
-        detailsPanel.add(namePanel);
-        detailsPanel.add(addressFullPanel);
-        detailsPanel.add(addressDistrictPanel);
-        detailsPanel.add(addressCityPanel);
-
-        return detailsPanel;
+    private void createDetailsPanel(){
+        DetailsPartialView detailsPartialView = new DetailsPartialView(hotel, this::refresh, this::frameDispose);
+        detailsPanel = detailsPartialView.getPanel();
     }
 
-    private JPanel createRoomsPanel() {
-        JPanel roomsPanel = new JPanel();
-        roomsPanel.setLayout(new GridLayout(0, 2));
-
-
-        return roomsPanel;
+    private void createRoomsPanel() {
+        RoomsPartialView roomsPartialView = new RoomsPartialView(hotel, this::refresh, this::frameDispose);
+        roomsPanel = roomsPartialView.render();
     }
 
-    private JPanel createSeasonsPanel() {
-        JPanel seasonsPanel = new JPanel();
-        seasonsPanel.setLayout(new GridLayout(0, 2));
-
-        JLabel nameLabel = new JLabel("Name");
-        JTextField nameField = new JTextField("Hotel Name");
-        nameField.setEditable(false);
-        seasonsPanel.add(nameLabel);
-        seasonsPanel.add(nameField);
-
-        return seasonsPanel;
+    private void createSeasonsPanel() {
+          SeasonsPartialView seasonsPartialView = new SeasonsPartialView(hotel, this::refresh, this::frameDispose);
+          seasonsPanel = seasonsPartialView.render();
     }
+
+    private void createReservationsPanel() {
+        ReservationsPartialView reservationsPartialView = new ReservationsPartialView(hotel, this::refresh, this::frameDispose);
+        reservationsPanel = reservationsPartialView.render();
+    }
+
+    private void createPansionsPanel() {
+        PansionsPartialView pansionsPartialView = new PansionsPartialView(hotel, this::refresh, this::frameDispose);
+        pansionsPanel = pansionsPartialView.render();
+    }
+
 
     private JPanel createLogoPanel() {
         JPanel logoPanel = new JPanel();
@@ -151,25 +120,24 @@ public class DetailsView extends Component {
         JPanel summaryPanel = new JPanel();
         summaryPanel.setBackground(Color.white);
         summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
-        summaryPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
-
-        JLabel nameLabel = new JLabel("Name:");
-        JLabel nameField = new JLabel("Hotel Name");
-        nameField.setFont(new Font("Serif", Font.PLAIN, 10));
+        summaryPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
+        //add a label with the name
+        JLabel nameLabel = new JLabel(hotel.getName());
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        //add a label with the address
+        JLabel addressLabel = new JLabel(hotel.getAddressFull());
+        addressLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        //add a label with the phone
+        JLabel phoneLabel = new JLabel(hotel.getPhone());
+        phoneLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         summaryPanel.add(nameLabel);
-        summaryPanel.add(nameField);
-
-        JLabel addressLabel = new JLabel("Address");
-        JLabel addressField = new JLabel("Hotel Address");
-        addressField.setFont(new Font("Serif", Font.PLAIN, 10));
         summaryPanel.add(addressLabel);
-        summaryPanel.add(addressField);
-
-
+        summaryPanel.add(phoneLabel);
         return summaryPanel;
     }
 
     public DetailsView() {
+        hotel = new Hotel();
         JFrame frame = new JFrame("Hotel:");
         configureFrame(frame);
         mainPanel = new JPanel();
@@ -178,8 +146,9 @@ public class DetailsView extends Component {
         frame.setVisible(true);
     }
 
-    public DetailsView(Hotel hotel) {
-        JFrame frame = new JFrame("Hotels");
+    public DetailsView(int hotelId) {
+        hotel = hotelController.getById(hotelId);
+        JFrame frame = new JFrame("Hotel: " + hotel.getName());
         configureFrame(frame);
         mainPanel = new JPanel();
         placeComponents(mainPanel);
@@ -193,7 +162,20 @@ public class DetailsView extends Component {
         mainPanel.add(createTabbedPane(), BorderLayout.CENTER);
     }
 
-    
+    public void refresh() {
+        // get hotel from db
+        hotel = hotelController.getById(hotel.getId());
+        // refresh the view
+        mainPanel.removeAll();
+        placeComponents(mainPanel);
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+    public void frameDispose() {
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(mainPanel);
+        frame.dispose();
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(DetailsView::new);

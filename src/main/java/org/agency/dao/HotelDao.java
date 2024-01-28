@@ -3,11 +3,13 @@ package org.agency.dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.agency.core.PaginatedResult;
 import org.agency.entities.Hotel;
 import org.agency.core.Database;
-import org.agency.entities.User;
+// The import org.agency.entities.User is never used
+
 
 public class HotelDao {
 
@@ -23,8 +25,8 @@ public class HotelDao {
     public void insert(Hotel hotel) {
         String query = "INSERT INTO hotels (name, address_full, address_district, address_city, address_country, " +
                 "star_rating, has_car_park, has_internet, has_pool, has_conciege, has_spa, has_room_service, " +
-                "phone, website, email, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "phone, website, email) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             setParameters(preparedStatement, hotel);
@@ -50,13 +52,12 @@ public class HotelDao {
     public void update(Hotel hotel) {
         String query = "UPDATE hotels SET name = ?, address_full = ?, address_district = ?, address_city = ?, " +
                 "address_country = ?, star_rating = ?, has_car_park = ?, has_internet = ?, has_pool = ?, " +
-                "has_conciege = ?, has_spa = ?, has_room_service = ?, phone = ?, website = ?, email = ?, " +
-                "created_at = ?, updated_at = ?, deleted_at = ?, created_by = ?, updated_by = ?, deleted_by = ? " +
+                "has_conciege = ?, has_spa = ?, has_room_service = ?, phone = ?, website = ?, email = ? " +
                 "WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setParameters(preparedStatement, hotel);
-            preparedStatement.setInt(22, hotel.getId());
+            preparedStatement.setInt(16, hotel.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -133,12 +134,6 @@ public class HotelDao {
         preparedStatement.setString(13, hotel.getPhone());
         preparedStatement.setString(14, hotel.getWebsite());
         preparedStatement.setString(15, hotel.getEmail());
-        preparedStatement.setDate(16, new java.sql.Date(hotel.getCreatedAt().getTime()));
-        preparedStatement.setDate(17, new java.sql.Date(hotel.getUpdatedAt().getTime()));
-        preparedStatement.setDate(18, hotel.getDeletedAt() != null ? new java.sql.Date(hotel.getDeletedAt().getTime()) : null);
-        preparedStatement.setInt(19, hotel.getCreatedBy());
-        preparedStatement.setInt(20, hotel.getUpdatedBy());
-        preparedStatement.setInt(21, hotel.getDeletedBy() != null ? hotel.getDeletedBy() : 0);
     }
 
     private Hotel mapResultSetToHotel(ResultSet resultSet) throws SQLException {
@@ -153,26 +148,18 @@ public class HotelDao {
         hotel.setHasCarPark(resultSet.getBoolean("has_car_park"));
         hotel.setHasInternet(resultSet.getBoolean("has_internet"));
         hotel.setHasPool(resultSet.getBoolean("has_pool"));
-        hotel.setHasConcierge(resultSet.getBoolean("has_conciege"));
+        hotel.setHasConcierge(resultSet.getBoolean("has_conciege")); // Update the column name here
         hotel.setHasSpa(resultSet.getBoolean("has_spa"));
         hotel.setHasRoomService(resultSet.getBoolean("has_room_service"));
         hotel.setPhone(resultSet.getString("phone"));
         hotel.setWebsite(resultSet.getString("website"));
         hotel.setEmail(resultSet.getString("email"));
-        /*
-        hotel.setCreatedAt(resultSet.getDate("created_at"));
-        hotel.setUpdatedAt(resultSet.getDate("updated_at"));
-        hotel.setDeletedAt(resultSet.getDate("deleted_at"));
-        hotel.setCreatedBy(resultSet.getInt("created_by"));
-        hotel.setUpdatedBy(resultSet.getInt("updated_by"));
-        hotel.setDeletedBy(resultSet.getInt("deleted_by"));*/
-
         return hotel;
     }
 
     private void handleSQLException(SQLException e) {
         e.printStackTrace();
-        // Handle exceptions as needed
+        Logger.getGlobal().severe("Something went wrong while accessing the database.");
     }
 
     public PaginatedResult<Hotel> paginate(int offset, int limit, String keyword) {
@@ -231,7 +218,8 @@ public class HotelDao {
 
         } catch (SQLException e) {
             handleSQLException(e);
-            // Handle the exception or rethrow it based on your application's logic
+            // Alert the user that something went wrong
+            Logger.getGlobal().severe("Something went wrong while paginating hotels.");
         }
 
         return null;

@@ -39,33 +39,30 @@ public class MainView {
     private void addButtons() {
         mainBox.add(Box.createVerticalStrut(20)); // Add some vertical space between logo and buttons
 
-        JButton addReservationButton = new JButton("Add Reservation");
-        JButton listReservationsButton = new JButton("List Reservations");
+        JButton ReservationsButton = new JButton("Reservations");
         JButton usersButton = new JButton("Users");
         JButton hotelsButton = new JButton("Hotels");
         JButton exitButton = new JButton("Exit");
 
         // Set a preferred width for the buttons
         Dimension buttonSize = new Dimension(300, 40);
-        addReservationButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        listReservationsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ReservationsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         usersButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         hotelsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        addReservationButton.setMaximumSize(buttonSize);
-        listReservationsButton.setMaximumSize(buttonSize);
+        ReservationsButton.setMaximumSize(buttonSize);
         usersButton.setMaximumSize(buttonSize);
         hotelsButton.setMaximumSize(buttonSize);
         exitButton.setMaximumSize(buttonSize);
 
-        addReservationButton.setPreferredSize(buttonSize);
-        listReservationsButton.setPreferredSize(buttonSize);
+        ReservationsButton.setPreferredSize(buttonSize);
         usersButton.setPreferredSize(buttonSize);
         hotelsButton.setPreferredSize(buttonSize);
         exitButton.setPreferredSize(buttonSize);
 
         // Add action listeners to the buttons
+        ReservationsButton.addActionListener(e -> new org.agency.views.reservation.ListView());
         hotelsButton.addActionListener(e -> new org.agency.views.hotel.ListView());
         usersButton.addActionListener(e -> new org.agency.views.user.ListView());
         exitButton.addActionListener(e -> System.exit(0));
@@ -78,10 +75,7 @@ public class MainView {
         mainBox.setBackground(Color.WHITE); // Set main box background to white
         // Add vertical gaps between buttons
         mainBox.add(Box.createVerticalGlue());
-        mainBox.add(addReservationButton);
-        //
-        mainBox.add(Box.createVerticalStrut(10)); // Add vertical gap
-        mainBox.add(listReservationsButton);
+        mainBox.add(ReservationsButton);
         //
         mainBox.add(Box.createVerticalStrut(10)); // Add vertical gap
         mainBox.add(hotelsButton);

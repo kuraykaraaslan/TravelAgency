@@ -1,5 +1,6 @@
 package org.agency.entities;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Season {
@@ -46,6 +47,28 @@ public class Season {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public void setStartDateLocalDate(LocalDate startDate) {
+        this.startDate = java.sql.Date.valueOf(startDate);
+    }
+
+    public void setEndDateLocalDate(LocalDate endDate) {
+        this.endDate = java.sql.Date.valueOf(endDate);
+    }
+
+    public LocalDate getStartDateLocalDate() {
+        if (startDate == null) {
+            return null;
+        }
+        return LocalDate.parse(startDate.toString());
+    }
+
+    public LocalDate getEndDateLocalDate() {
+        if (endDate == null) {
+            return null;
+        }
+        return LocalDate.parse(endDate.toString());
     }
 
     public Date getEndDate() {

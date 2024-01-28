@@ -1,6 +1,9 @@
 package org.agency.dao;
 
+import java.util.HashMap;
 import java.util.List;
+
+import org.agency.entities.Room;
 import org.agency.entities.Season;
 import org.agency.core.Database;
 
@@ -20,9 +23,8 @@ public class SeasonDao {
     }
 
     public void insert(Season season) {
-        String query = "INSERT INTO seasons (name, start_date, end_date, created_at, updated_at, deleted_at, " +
-                "created_by, updated_by, deleted_by, hotel_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO seasons (name, start_date, end_date, hotel_id) " +
+                "VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             setParameters(preparedStatement, season);
@@ -81,36 +83,121 @@ public class SeasonDao {
 
     private void setParameters(PreparedStatement preparedStatement, Season season) throws SQLException {
         preparedStatement.setString(1, season.getName());
-        preparedStatement.setDate(2, new java.sql.Date(season.getStartDate().getTime()));
-        preparedStatement.setDate(3, new java.sql.Date(season.getEndDate().getTime()));
-        preparedStatement.setDate(4, new java.sql.Date(season.getCreatedAt().getTime()));
-        preparedStatement.setDate(5, new java.sql.Date(season.getUpdatedAt().getTime()));
-        preparedStatement.setDate(6, season.getDeletedAt() != null ? new java.sql.Date(season.getDeletedAt().getTime()) : null);
-        preparedStatement.setInt(7, season.getCreatedBy());
-        preparedStatement.setInt(8, season.getUpdatedBy());
-        preparedStatement.setInt(9, season.getDeletedBy() != null ? season.getDeletedBy() : 0);
-        preparedStatement.setInt(10, season.getHotelId());
+        preparedStatement.setDate(2, Date.valueOf(season.getStartDateLocalDate()));
+        preparedStatement.setDate(3, Date.valueOf(season.getEndDateLocalDate()));
+        preparedStatement.setInt(4, season.getHotelId());
     }
 
     private Season mapResultSetToSeason(ResultSet resultSet) throws SQLException {
         Season season = new Season();
-        season.setId(resultSet.getInt("id"));
-        season.setName(resultSet.getString("name"));
-        season.setStartDate(resultSet.getDate("start_date"));
-        season.setEndDate(resultSet.getDate("end_date"));
-        season.setCreatedAt(resultSet.getDate("created_at"));
-        season.setUpdatedAt(resultSet.getDate("updated_at"));
-        season.setDeletedAt(resultSet.getDate("deleted_at"));
-        season.setCreatedBy(resultSet.getInt("created_by"));
-        season.setUpdatedBy(resultSet.getInt("updated_by"));
-        season.setDeletedBy(resultSet.getInt("deleted_by"));
-        season.setHotelId(resultSet.getInt("hotel_id"));
-
+        if (resultSet.findColumn("id") != -1) {
+            season.setId(resultSet.getInt("id"));
+        }
+        if (resultSet.findColumn("name") != -1) {
+            season.setName(resultSet.getString("name"));
+        }
+        if (resultSet.findColumn("start_date") != -1) {
+            season.setStartDate(resultSet.getDate("start_date"));
+        }
+        if (resultSet.findColumn("end_date") != -1) {
+            season.setEndDate(resultSet.getDate("end_date"));
+        }
+        if (resultSet.findColumn("hotel_id") != -1) {
+            season.setHotelId(resultSet.getInt("hotel_id"));
+        }
+    
         return season;
     }
 
     private void handleSQLException(SQLException e) {
         e.printStackTrace();
         // Handle exceptions as needed
+    }
+
+    public void delete(Season season) {
+        String query = "DELETE FROM seasons WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, season.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Deleting season failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+    }
+
+    public void update(Season season) {
+        String query = "UPDATE seasons SET name = ?, start_date = ?, end_date = ?, hotel_id = ? WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            setParameters(preparedStatement, season);
+            preparedStatement.setInt(5, season.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Updating season failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+    }
+
+    //getAllByHotelId
+    public List<Season> getAllByHotelId(int hotelId) {
+        List<Season> seasons = new ArrayList<>();
+        String query = "SELECT * FROM seasons WHERE hotel_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, hotelId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    seasons.add(mapResultSetToSeason(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return seasons;
+    }
+
+    public List<Season> getByFilters(HashMap<String, Object> filters) {
+        List<Season> seasons = new ArrayList<>();
+        String fullQuery = "SELECT * FROM seasons WHERE hotel_id = ? AND start_date >= ? AND end_date <= ?";
+
+        String query = "SELECT * FROM seasons WHERE ";
+
+        if (filters.containsKey("hotel_id")) {
+            System.out.println("hotel_id: " + filters.get("hotel_id"));
+            query += "hotel_id = " + filters.get("hotel_id") + " AND ";
+        }
+
+        if (filters.containsKey("start_date")) {
+            query += "start_date >= " + filters.get("start_date") + " AND ";
+        }
+
+        if (filters.containsKey("end_date")) {
+            query += "end_date <= " + filters.get("end_date") + " AND ";
+        }
+
+        query = query.substring(0, query.length() - 5);
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    seasons.add(mapResultSetToSeason(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return seasons;
     }
 }

@@ -1,5 +1,6 @@
 package org.agency.entities;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Reservation {
@@ -11,6 +12,8 @@ public class Reservation {
     private String guestPhone;
     private Date checkIn;
     private Date checkOut;
+
+    private String status;
     private int adultCount;
     private int childCount;
     private double price;
@@ -73,6 +76,28 @@ public class Reservation {
 
     public Date getCheckIn() {
         return checkIn;
+    }
+
+    public LocalDate getCheckInLocalDate() {
+        if (checkIn == null) {
+            return null;
+        }
+        return LocalDate.parse(checkIn.toString());
+    }
+
+    public LocalDate getCheckOutLocalDate() {
+        if (checkOut == null) {
+            return null;
+        }
+        return LocalDate.parse(checkOut.toString());
+    }
+
+    public void setCheckInLocalDate(LocalDate checkIn) {
+        this.checkIn = java.sql.Date.valueOf(checkIn);
+    }
+
+    public void setCheckOutLocalDate(LocalDate checkOut) {
+        this.checkOut = java.sql.Date.valueOf(checkOut);
     }
 
     public void setCheckIn(Date checkIn) {
@@ -173,6 +198,30 @@ public class Reservation {
 
     public void setRoomId(int roomId) {
         this.roomId = roomId;
+    }
+
+    public String getStatus() {
+        if (status != null) {
+            return status;
+        } else {
+            if (checkIn != null && checkOut != null) {
+                LocalDate today = LocalDate.now();
+                LocalDate checkInLocalDate = LocalDate.parse(checkIn.toString());
+                LocalDate checkOutLocalDate = LocalDate.parse(checkOut.toString());
+                if (today.isBefore(checkInLocalDate)) {
+                    return "PENDING";
+                } else if (today.isAfter(checkInLocalDate) && today.isBefore(checkOutLocalDate)) {
+                    return "CHECKED_IN";
+                } else if (today.isAfter(checkOutLocalDate)) {
+                    return "CHECKED_OUT";
+                }
+            }
+        }
+        return "PENDING";
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     // toString method (optional)

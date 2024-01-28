@@ -2,8 +2,10 @@ package org.agency.dao;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.agency.core.PaginatedResult;
 import org.agency.entities.Reservation;
 import org.agency.core.Database;
 
@@ -127,4 +129,189 @@ public class ReservationDao {
         e.printStackTrace();
         // Handle exceptions as needed
     }
+
+    public void update(Reservation reservation) {
+        String query = "UPDATE reservations SET guest_citizen_id = ?, guest_full_name = ?, guest_email = ?, guest_phone = ?, " +
+                "check_in = ?, check_out = ?, adult_count = ?, child_count = ?, price = ?, created_at = ?, updated_at = ?, deleted_at = ?, " +
+                "created_by = ?, updated_by = ?, deleted_by = ?, hotel_id = ?, room_id = ? WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            setParameters(preparedStatement, reservation);
+            preparedStatement.setInt(18, reservation.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Updating reservation failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+    }
+
+
+    public void delete(Reservation reservation) {
+        String query = "DELETE FROM reservations WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, reservation.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Deleting reservation failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+    }
+
+    public List<Reservation> getByFilters(HashMap<String, Object> filters) {
+        List<Reservation> reservations = new ArrayList<>();
+        String fullQuery = "SELECT * FROM reservations WHERE hotel_id = ? AND room_id = ? AND check_in >= ? AND check_out <= ? AND adult_count >= ? AND child_count >= ? AND price >= ? AND created_at >= ? AND updated_at >= ? AND deleted_at >= ? AND created_by >= ? AND updated_by >= ? AND deleted_by >= ?";
+
+        String query = "SELECT * FROM reservations WHERE ";
+
+        if (filters.containsKey("hotel_id")) {
+            query += "hotel_id = " + filters.get("hotel_id") + " AND ";
+        }
+
+        if (filters.containsKey("room_id")) {
+            query += "room_id = " + filters.get("room_id") + " AND ";
+        }
+
+        if (filters.containsKey("check_in")) {
+            query += "check_in >= " + filters.get("check_in") + " AND ";
+        }
+        if (filters.containsKey("check_out")) {
+            query += "check_out <= " + filters.get("check_out") + " AND ";
+        }
+
+        if (filters.containsKey("guest_citizen_id")) {
+            query += "guest_citizen_id = ? AND ";
+        }
+
+        if (filters.containsKey("guest_full_name")) {
+            query += "guest_full_name = ? AND ";
+        }
+
+        if (filters.containsKey("guest_email")) {
+            query += "guest_email = ? AND ";
+        }
+
+        if (filters.containsKey("guest_phone")) {
+            query += "guest_phone = ? AND ";
+        }
+
+        if (filters.containsKey("status")) {
+            query += "status = ? AND ";
+        }
+        // if there is no filter, return all reservations
+
+        if (query.equals("SELECT * FROM reservations WHERE ")) {
+            return getAll();
+        }
+
+        // remove the last AND from the query
+
+        // remove the last AND
+        query = query.substring(0, query.length() - 5);
+
+        System.out.println(query);
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    reservations.add(mapResultSetToReservation(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return reservations;
+    }
+
+    // Additions
+    public PaginatedResult<Reservation> paginate(int offset, int limit, String keyword) {
+        List<Reservation> reservations = new ArrayList<>();
+
+        // Handle null keyword
+        if (keyword == null) {
+            keyword = "";
+        }
+
+        // Handle negative offset
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        String query = "SELECT * FROM reservations WHERE (guest_citizen_id LIKE ? OR guest_full_name LIKE ? OR guest_email LIKE ?) AND deleted_at IS NULL LIMIT ? OFFSET ?";
+        String countQuery = "SELECT COUNT(*) FROM reservations WHERE (guest_citizen_id LIKE ? OR guest_full_name LIKE ? OR guest_email LIKE ?) AND deleted_at IS NULL";
+
+        try (
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                PreparedStatement countStatement = connection.prepareStatement(countQuery)
+        ) {
+            preparedStatement.setString(1, "%" + keyword + "%");
+            preparedStatement.setString(2, "%" + keyword + "%");
+            preparedStatement.setString(3, "%" + keyword + "%");
+            preparedStatement.setInt(4, limit);
+            preparedStatement.setInt(5, offset);
+
+            countStatement.setString(1, "%" + keyword + "%");
+            countStatement.setString(2, "%" + keyword + "%");
+            countStatement.setString(3, "%" + keyword + "%");
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    if (resultSet.getDate("deleted_at") != null) {
+                        continue;
+                    }
+                    reservations.add(mapResultSetToReservation(resultSet));
+                }
+            }
+
+            // Calculate total count
+            int total = 0;
+            try (ResultSet countResultSet = countStatement.executeQuery()) {
+                if (countResultSet.next()) {
+                    total = countResultSet.getInt(1);
+                }
+            }
+
+            return new PaginatedResult<>(reservations, total);
+
+        } catch (SQLException e) {
+            handleSQLException(e);
+            // Handle the exception or rethrow it based on your application's logic
+        }
+
+        return null;
+    }
+
+    // GET BY HOTEL ID
+    public List<Reservation> getByHotelId(int hotelId) {
+        List<Reservation> reservations = new ArrayList<>();
+        String query = "SELECT * FROM reservations WHERE hotel_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, hotelId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    reservations.add(mapResultSetToReservation(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return reservations;
+    }
+
+    public PaginatedResult<Reservation> paginate(int offset, int limit) {
+        return paginate(offset, limit, null);
+    }
 }
+

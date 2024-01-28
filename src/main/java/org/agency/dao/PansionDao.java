@@ -122,4 +122,58 @@ public class PansionDao {
         e.printStackTrace();
         // Handle exceptions as needed
     }
+
+    public void update(Pansion pansion) {
+        String query = "UPDATE pansions SET name = ?, breakfast = ?, lunch = ?, dinner = ?, midnight_snack = ?, " +
+                "soft_drinks = ?, alcoholic_drinks = ?, snacks = ?, created_at = ?, updated_at = ?, deleted_at = ?, " +
+                "created_by = ?, updated_by = ?, deleted_by = ?, hotel_id = ? WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            setPansionParameters(preparedStatement, pansion);
+            preparedStatement.setInt(16, pansion.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Updating pansion failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+    }
+
+    public void delete(Pansion pansion) {
+        String query = "DELETE FROM pansions WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, pansion.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Deleting pansion failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+    }
+
+    public List<Pansion> getByHotelId(int hotelId) {
+        List<Pansion> pansions = new ArrayList<>();
+        String query = "SELECT * FROM pansions WHERE hotel_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, hotelId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    pansions.add(mapResultSetToPansion(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return pansions;
+    }
 }

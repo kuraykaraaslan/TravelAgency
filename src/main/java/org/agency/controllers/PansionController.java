@@ -25,4 +25,18 @@ public class PansionController {
         return pansionDao.getAll();
     }
 
+    public void update(Pansion pansion) {
+        pansionDao.update(pansion);
+        System.out.println("Pansion updated successfully.");
+    }
+
+    public void delete(Pansion pansion) {
+        pansionDao.delete(pansion);
+        System.out.println("Pansion deleted successfully.");
+    }
+
+    public List<Pansion> getByHotelId(int hotelId) {
+        return pansionDao.getByHotelId(hotelId);
+    }
+
 }

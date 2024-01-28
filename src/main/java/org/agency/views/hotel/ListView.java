@@ -10,14 +10,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.agency.Main;
 import org.agency.controllers.HotelController;
 import org.agency.core.PaginatedResult;
 import org.agency.entities.Hotel;
 
-public class ListView extends Component {
-    //private HotelController hotelController = Main.getHotelController();
-    private HotelController hotelController = new HotelController();
+public class ListView {
+    private HotelController hotelController;
     private JPanel mainPanel;
     private DefaultTableModel model;
     private static JTable table;
@@ -35,20 +33,21 @@ public class ListView extends Component {
     private JLabel pageNumberLabel;
 
     public ListView() {
-        JFrame frame = new JFrame("Hotels");
-        configureFrame(frame);
+        hotelController = new HotelController();
+        JFrame frame = configureFrame();
         mainPanel = new JPanel();
         placeComponents(mainPanel);
         frame.add(mainPanel);
-        paginationButtonRefresh();
-        frame.setVisible(true);
     }
 
-    private void configureFrame(JFrame frame) {
+    private JFrame configureFrame() {
+        JFrame frame = new JFrame("Hotels");
         frame.setSize(getHalfScreenSize());
         frame.setMinimumSize(new Dimension(1000, 600));
         frame.setIconImage(new ImageIcon("src/main/resources/icon.png").getImage());
         frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        return frame;
     }
 
     private Dimension getHalfScreenSize() {
@@ -110,7 +109,6 @@ public class ListView extends Component {
                     menu.show(table, e.getX(), e.getY());
                 }
             }
-
         });
         table.setFont(new Font("Arial", Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(table);
@@ -324,7 +322,7 @@ public class ListView extends Component {
 
     private void handleCreateButtonClick() {
         //TODO: Open create view
-        DetailsView detailsView = new DetailsView(new Hotel());
+        DetailsView detailsView = new DetailsView();
         detailsView.setVisible(true);
 
         doSearch(searchTerm);
@@ -337,7 +335,7 @@ public class ListView extends Component {
             int hotelId = (int) table.getValueAt(selectedRow, 0);
             Hotel hotel = hotelController.getById(hotelId);
             //CONFIRMATION
-            int dialogResult = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this hotel?", "Warning", JOptionPane.YES_NO_OPTION);
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + hotel.getName() + "?", "Warning", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
                 hotelController.delete(hotel);
                 doSearch(searchTerm);
@@ -352,8 +350,10 @@ public class ListView extends Component {
             int hotelId = (int) table.getValueAt(selectedRow, 0);
             Hotel hotel = hotelController.getById(hotelId);
 
+            //System.out.println(hotel.getName());
+
             //TODO: Open details view
-            DetailsView detailsView = new DetailsView(hotel);
+            DetailsView detailsView = new DetailsView(hotel.getId());
         }
     }
 

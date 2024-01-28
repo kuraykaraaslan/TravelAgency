@@ -4,11 +4,28 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Java](https://img.shields.io/badge/Java-21-red.svg)](https://www.oracle.com/java/technologies/javase-downloads.html)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13.3-blue.svg)](https://www.postgresql.org/download/)
-[![Swing](https://img.shields.io/badge/Swing-1.0.0-green.svg)](https://docs.oracle.com/javase/7/docs/api/javax/swing/package-summary.html)
 
 ## Description
 
 This project aims to create a digital management system for Patika Tourism Agency to streamline its daily operations in the hotel sector and optimize customer reservation processes.
+
+
+## Table of Contents
+
+- [Description](#description)
+- [Technologies](#technologies)
+- [Project Overview](#project-overview)
+- [Features](#features)
+- [Installation](#installation)
+    - [Clone](#clone)
+    - [Permission Table](#permission-table)
+- [Database Design](#database-design)
+- [Coding Practices](#coding-practices)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+- [License](#license)
+
+
 
 ## Technologies
 
@@ -50,6 +67,10 @@ The project consists of 3 main parts: **Hotel Management**, **User Management** 
     - List existing reservations with details like check-in/out dates, guests, and total price.
     - Add new reservations by selecting available rooms and providing guest information.
     - Delete or update existing reservations.
+- **Security:**
+    - Passwords are stored in the database as hashes for security purposes.
+    - Users are required to log in to the system with their credentials.
+    - The system is protected against SQL injection attacks.
 ## Installation
 
 ### Clone
@@ -96,6 +117,11 @@ The project uses Swing for the graphical user interface, providing a user-friend
 - Code readability and formatting are maintained with proper indentation.
 - Comments and documentation are provided for better understanding.
 - The code is modular and reusable.
+
+## Screenshots
+
+Include screenshots here to visually showcase the application's interface and features.
+
 
 ## Contributing
 

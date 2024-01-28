@@ -1,12 +1,11 @@
 package org.agency.dao;
 
-import java.util.List;
+import java.util.*;
+
 import org.agency.entities.Room;
 import org.agency.core.Database;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RoomDao {
 
@@ -22,9 +21,8 @@ public class RoomDao {
     public void insert(Room room) {
         String query = "INSERT INTO rooms (room_number, type, double_bed_count, single_bed_count, adult_price, " +
                 "child_price, square_meters, has_television, has_balcony, has_air_conditioning, has_minibar, " +
-                "has_valuables_safe, has_gaming_console, has_projector, created_at, updated_at, deleted_at, " +
-                "created_by, updated_by, deleted_by, hotel_id, season_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "has_valuables_safe, has_gaming_console, has_projector, hotel_id, season_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             setParameters(preparedStatement, room);
@@ -96,14 +94,8 @@ public class RoomDao {
         preparedStatement.setBoolean(12, room.isHasValuablesSafe());
         preparedStatement.setBoolean(13, room.isHasGamingConsole());
         preparedStatement.setBoolean(14, room.isHasProjector());
-        preparedStatement.setDate(15, new java.sql.Date(room.getCreatedAt().getTime()));
-        preparedStatement.setDate(16, new java.sql.Date(room.getUpdatedAt().getTime()));
-        preparedStatement.setDate(17, room.getDeletedAt() != null ? new java.sql.Date(room.getDeletedAt().getTime()) : null);
-        preparedStatement.setInt(18, room.getCreatedBy());
-        preparedStatement.setInt(19, room.getUpdatedBy());
-        preparedStatement.setInt(20, room.getDeletedBy() != null ? room.getDeletedBy() : 0);
-        preparedStatement.setInt(21, room.getHotelId());
-        preparedStatement.setInt(22, room.getSeasonId());
+        preparedStatement.setInt(15, room.getHotelId());
+        preparedStatement.setInt(16, room.getSeasonId());
     }
 
     private Room mapResultSetToRoom(ResultSet resultSet) throws SQLException {
@@ -123,20 +115,192 @@ public class RoomDao {
         room.setHasValuablesSafe(resultSet.getBoolean("has_valuables_safe"));
         room.setHasGamingConsole(resultSet.getBoolean("has_gaming_console"));
         room.setHasProjector(resultSet.getBoolean("has_projector"));
-        room.setCreatedAt(resultSet.getDate("created_at"));
-        room.setUpdatedAt(resultSet.getDate("updated_at"));
-        room.setDeletedAt(resultSet.getDate("deleted_at"));
-        room.setCreatedBy(resultSet.getInt("created_by"));
-        room.setUpdatedBy(resultSet.getInt("updated_by"));
-        room.setDeletedBy(resultSet.getInt("deleted_by"));
         room.setHotelId(resultSet.getInt("hotel_id"));
         room.setSeasonId(resultSet.getInt("season_id"));
-
         return room;
     }
+
 
     private void handleSQLException(SQLException e) {
         e.printStackTrace();
         // Handle exceptions as needed
+    }
+
+    public void update(Room room) {
+        String query = "UPDATE rooms SET room_number = ?, type = ?, double_bed_count = ?, single_bed_count = ?, " +
+                "adult_price = ?, child_price = ?, square_meters = ?, has_television = ?, has_balcony = ?, " +
+                "has_air_conditioning = ?, has_minibar = ?, has_valuables_safe = ?, has_gaming_console = ?, " +
+                "has_projector = ?, hotel_id = ?, season_id = ? WHERE id = ?";
+
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            setParameters(preparedStatement, room);
+            preparedStatement.setInt(23, room.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Updating room failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+    }
+
+    public void delete(Room room) {
+        String query = "DELETE FROM rooms WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, room.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Deleting room failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+    }
+
+    public List<Room> getByHotelId(int hotelId) {
+        List<Room> rooms = new ArrayList<>();
+        String query = "SELECT * FROM rooms WHERE hotel_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, hotelId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    rooms.add(mapResultSetToRoom(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return rooms;
+    }
+
+    public List<Room> getByHotelId(int hotelId, String query) {
+        List<Room> rooms = new ArrayList<>();
+        String sqlQuery = "SELECT * FROM rooms WHERE hotel_id = ? AND (room_number LIKE ? OR type LIKE ?)";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
+            preparedStatement.setInt(1, hotelId);
+            preparedStatement.setString(2, "%" + query + "%");
+            preparedStatement.setString(3, "%" + query + "%");
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    rooms.add(mapResultSetToRoom(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return rooms;
+    }
+
+    public List<Room> paginate(int offset, int limit) {
+        List<Room> rooms = new ArrayList<>();
+        String query = "SELECT * FROM rooms LIMIT ?, ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, offset);
+            preparedStatement.setInt(2, limit);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    rooms.add(mapResultSetToRoom(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return rooms;
+    }
+
+
+    public List<Room> getByFilters(HashMap<String, Object> filters) {
+        List<Room> rooms = new ArrayList<>();
+        String fullQuery = "SELECT * FROM rooms WHERE hotel_id = ? AND (room_number LIKE ? OR type LIKE ?) " +
+                "AND double_bed_count = ? AND single_bed_count = ? AND adult_price = ? AND child_price = ? " +
+                "AND square_meters = ? AND has_television = ? AND has_balcony = ? AND has_air_conditioning = ? " +
+                "AND has_minibar = ? AND has_valuables_safe = ? AND has_gaming_console = ? AND has_projector = ?";
+
+        String query = "SELECT * FROM rooms WHERE ";
+
+        if (filters.containsKey("hotel_id")) {
+            query += "hotel_id = " + filters.get("hotel_id") + " AND ";
+        }
+        if (filters.containsKey("room_number")) {
+            query += "room_number LIKE '%" + filters.get("room_number") + "%' AND ";
+        }
+        if (filters.containsKey("type")) {
+            query += "type LIKE '%" + filters.get("type") + "%' AND ";
+        }
+        if (filters.containsKey("double_bed_count")) {
+            query += "double_bed_count = " + filters.get("double_bed_count") + " AND ";
+        }
+        if (filters.containsKey("single_bed_count")) {
+            query += "single_bed_count = " + filters.get("single_bed_count") + " AND ";
+        }
+        if (filters.containsKey("adult_price")) {
+            query += "adult_price = " + filters.get("adult_price") + " AND ";
+        }
+        if (filters.containsKey("child_price")) {
+            query += "child_price = " + filters.get("child_price") + " AND ";
+        }
+        if (filters.containsKey("square_meters")) {
+            query += "square_meters = " + filters.get("square_meters") + " AND ";
+        }
+        // for booleans if the value is true we add the column name to the query
+        if (filters.containsKey("has_television") && (boolean) filters.get("has_television")) {
+            query += "has_television = true AND ";
+        }
+
+        if (filters.containsKey("has_balcony") && (boolean) filters.get("has_balcony")) {
+            query += "has_balcony = true AND ";
+        }
+
+        if (filters.containsKey("has_air_conditioning") && (boolean) filters.get("has_air_conditioning")) {
+            query += "has_air_conditioning = true AND ";
+        }
+
+        if (filters.containsKey("has_minibar") && (boolean) filters.get("has_minibar")) {
+            query += "has_minibar = true AND ";
+        }
+
+        if (filters.containsKey("has_valuables_safe") && (boolean) filters.get("has_valuables_safe")) {
+            query += "has_valuables_safe = true AND ";
+        }
+
+        if (filters.containsKey("has_gaming_console") && (boolean) filters.get("has_gaming_console")) {
+            query += "has_gaming_console = true AND ";
+        }
+
+        if (filters.containsKey("has_projector") && (boolean) filters.get("has_projector")) {
+            query += "has_projector = true AND ";
+        }
+
+        // remove the last AND
+        query = query.substring(0, query.length() - 5);
+
+        System.out.println(query);
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    rooms.add(mapResultSetToRoom(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return rooms;
     }
 }

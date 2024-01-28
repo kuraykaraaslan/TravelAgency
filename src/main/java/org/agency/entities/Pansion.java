@@ -4,7 +4,7 @@ import java.util.Date;
 public class Pansion {
 
     private int id;
-    private String name;
+    private String name; //BED_
     private boolean breakfast;
     private boolean lunch;
     private boolean dinner;
