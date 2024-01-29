@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 import org.agency.core.PaginatedResult;
 import org.agency.entities.Hotel;
 import org.agency.core.Database;
-// The import org.agency.entities.User is never used
 
+// Import statement for User entity, but it is not used
 
 public class HotelDao {
 
@@ -22,13 +22,15 @@ public class HotelDao {
         }
     }
 
+    // Insert a hotel into the database
     public void insert(Hotel hotel) {
         String query = "INSERT INTO hotels (name, address_full, address_district, address_city, address_country, " +
                 "star_rating, has_car_park, has_internet, has_pool, has_conciege, has_spa, has_room_service, " +
                 "phone, website, email) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query,
+                Statement.RETURN_GENERATED_KEYS)) {
             setParameters(preparedStatement, hotel);
 
             int affectedRows = preparedStatement.executeUpdate();
@@ -49,6 +51,7 @@ public class HotelDao {
         }
     }
 
+    // Update an existing hotel in the database
     public void update(Hotel hotel) {
         String query = "UPDATE hotels SET name = ?, address_full = ?, address_district = ?, address_city = ?, " +
                 "address_country = ?, star_rating = ?, has_car_park = ?, has_internet = ?, has_pool = ?, " +
@@ -69,6 +72,7 @@ public class HotelDao {
         }
     }
 
+    // Delete a hotel from the database
     public void delete(Hotel hotel) {
         String query = "UPDATE hotels SET deleted_at = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -84,6 +88,8 @@ public class HotelDao {
             handleSQLException(e);
         }
     }
+
+    // Get a specific hotel by ID from the database
     public Hotel getById(int hotelId) {
         String query = "SELECT * FROM hotels WHERE id = ?";
 
@@ -102,12 +108,13 @@ public class HotelDao {
         return null;
     }
 
+    // Get all hotels from the database
     public ArrayList<Hotel> getAll() {
         ArrayList<Hotel> hotels = new ArrayList<>();
         String query = "SELECT * FROM hotels ORDER BY id ASC";
 
         try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+                ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 hotels.add(mapResultSetToHotel(resultSet));
             }
@@ -118,6 +125,7 @@ public class HotelDao {
         return hotels;
     }
 
+    // Set the prepared statement parameters for a hotel object
     private void setParameters(PreparedStatement preparedStatement, Hotel hotel) throws SQLException {
         preparedStatement.setString(1, hotel.getName());
         preparedStatement.setString(2, hotel.getAddressFull());
@@ -180,8 +188,7 @@ public class HotelDao {
 
         try (
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                PreparedStatement countStatement = connection.prepareStatement(countQuery)
-        ) {
+                PreparedStatement countStatement = connection.prepareStatement(countQuery)) {
             preparedStatement.setString(1, "%" + keyword + "%");
             preparedStatement.setString(2, "%" + keyword + "%");
             preparedStatement.setString(3, "%" + keyword + "%");
@@ -195,7 +202,6 @@ public class HotelDao {
             countStatement.setString(3, "%" + keyword + "%");
             countStatement.setString(4, "%" + keyword + "%");
             countStatement.setString(5, "%" + keyword + "%");
-
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -229,4 +235,3 @@ public class HotelDao {
         return paginate(offset, limit, null);
     }
 }
-

@@ -235,7 +235,7 @@ public class Reservation {
 
     // toString method (optional)
 
-    //setPansionId
+    // setPansionId
     public void setPansionId(int pansionId) {
         this.pansionId = pansionId;
     }
@@ -287,8 +287,6 @@ public class Reservation {
     public void setPansion(Pansion pansion) {
         this.pansionId = pansion.getId();
     }
-
-    
 
     @Override
     public String toString() {

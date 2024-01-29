@@ -42,7 +42,6 @@ public class ListView {
 
     private HashMap<String, Object> filters = new HashMap<>();
 
-
     public ListView() {
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
@@ -54,8 +53,8 @@ public class ListView {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.white);
         headerPanel.add(createLogoPanel(), BorderLayout.WEST);
-        //headerPanel.add(createSearchPanel(), BorderLayout.CENTER);
-        //headerPanel.add(createButtonPanel(), BorderLayout.EAST);
+        // headerPanel.add(createSearchPanel(), BorderLayout.CENTER);
+        // headerPanel.add(createButtonPanel(), BorderLayout.EAST);
         return headerPanel;
     }
 
@@ -79,7 +78,6 @@ public class ListView {
         logoPanel.add(logoLabel);
         return logoPanel;
     }
-
 
     private JPanel headerSearchPanel() {
         JPanel headerSearchPanel = new JPanel();
@@ -107,7 +105,7 @@ public class ListView {
 
         List<Hotel> hotels = hotelController.getAll();
 
-        //JCOMBOBOX WITH HOTELS WITH CUSTOM RENDERER and EMPTY OPTION
+        // JCOMBOBOX WITH HOTELS WITH CUSTOM RENDERER and EMPTY OPTION
         JComboBox<Hotel> hotelField = new JComboBox<>();
         hotelField.setPreferredSize(new Dimension(100, 30));
         hotelField.setMaximumSize(new Dimension(100, 30));
@@ -133,16 +131,7 @@ public class ListView {
             }
         });
 
-
         headerSearchPanel.add(hotelField);
-
-
-        JTextField fullNameField = new JTextField();
-        fullNameField.setPreferredSize(new Dimension(100, 30));
-        fullNameField.setMaximumSize(new Dimension(100, 30));
-        fullNameField.setMinimumSize(new Dimension(100, 30));
-        fullNameField.setToolTipText("Full Name");
-        headerSearchPanel.add(fullNameField);
 
         JLabel contactLabel = new JLabel("Contact");
         contactLabel.setPreferredSize(new Dimension(100, 30));
@@ -187,7 +176,6 @@ public class ListView {
         checkInField.setToolTipText("Check In");
         headerSearchPanel.add(checkInField);
 
-
         DatePicker checkOutField = new DatePicker();
         checkOutField.setPreferredSize(new Dimension(160, 30));
         checkOutField.setMaximumSize(new Dimension(160, 30));
@@ -219,9 +207,6 @@ public class ListView {
                 filters.put("hotel_id", ((Hotel) hotelField.getSelectedItem()).getId());
             }
 
-            if (fullNameField.getText().length() > 0) {
-                filters.put("guest_full_name", fullNameField.getText());
-            }
 
             if (contactField.getText().length() > 0) {
                 filters.put("guest_phone", contactField.getText());
@@ -239,10 +224,6 @@ public class ListView {
             if (checkOutField.getDate() != null) {
                 filters.put("check_out", checkOutField.getDate());
             }
-
-
-
-
 
             List<Reservation> reservations = reservationController.getByFilters(filters);
             Object[][] data = new Object[reservations.size()][columns.length];
@@ -309,7 +290,6 @@ public class ListView {
             data[i][8] = reservation.getPrice();
             data[i][9] = reservation.getStatus();
         }
-
 
         table = new JTable(data, columns);
 

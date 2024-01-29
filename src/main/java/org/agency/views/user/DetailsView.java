@@ -34,10 +34,10 @@ public class DetailsView extends Component {
         frame.setVisible(true);
     }
 
-
     public DetailsView() {
         this(new User());
     }
+
     private void configureFrame(JFrame frame) {
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         frame.setIconImage(new ImageIcon("src/main/resources/icon.png").getImage());
@@ -86,11 +86,11 @@ public class DetailsView extends Component {
     private void handleSave(Object e) {
         if (mode.equals("new")) {
             userController.registerUser(user);
-            //SHOW MESSAGE
+            // SHOW MESSAGE
             JOptionPane.showMessageDialog(null, "User created successfully!");
         } else if (mode.equals("edit")) {
             userController.update(user);
-            //SHOW MESSAGE
+            // SHOW MESSAGE
             JOptionPane.showMessageDialog(this, "User updated successfully!");
         }
     }
@@ -259,7 +259,7 @@ public class DetailsView extends Component {
         rolePanel.setLayout(new FlowLayout());
         JLabel roleLabel = new JLabel("Role");
         roleLabel.setPreferredSize(LABEL_DIMENSION);
-        JComboBox<String> roleComboBox = new JComboBox<>(new String[]{"AGENT", "ADMIN"});
+        JComboBox<String> roleComboBox = new JComboBox<>(new String[] { "AGENT", "ADMIN" });
         roleComboBox.setPreferredSize(FIELD_DIMENSION);
 
         if (user.getRole() != null) {

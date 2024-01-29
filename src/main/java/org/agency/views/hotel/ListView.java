@@ -117,20 +117,21 @@ public class ListView {
     }
 
     private Object[][] getTableData() {
-        return hotelController.paginate(currentPage, itemsPerPage, searchTerm).getData().stream().map(hotel -> new Object[]{
-                hotel.getId(),
-                hotel.getName(),
-                hotel.getPhone(),
-                hotel.getWebsite(),
-                hotel.getStarRating(),
-                hotel.getAddressFull(),
-                hotel.getAddressCity(),
-                hotel.getAddressCountry()
-        }).toArray(Object[][]::new);
+        return hotelController.paginate(currentPage, itemsPerPage, searchTerm).getData().stream()
+                .map(hotel -> new Object[] {
+                        hotel.getId(),
+                        hotel.getName(),
+                        hotel.getPhone(),
+                        hotel.getWebsite(),
+                        hotel.getStarRating(),
+                        hotel.getAddressFull(),
+                        hotel.getAddressCity(),
+                        hotel.getAddressCountry()
+                }).toArray(Object[][]::new);
     }
 
     private String[] getColumnNames() {
-        return new String[]{"ID", "Name", "Phone", "Website", "Rating","Address", "City", "Country"};
+        return new String[] { "ID", "Name", "Phone", "Website", "Rating", "Address", "City", "Country" };
     }
 
     private void handleTableRowSelection() {
@@ -160,7 +161,7 @@ public class ListView {
     }
 
     private void updateTableData(ArrayList<Hotel> newData) {
-        Object[][] tableData = newData.stream().map(hotel -> new Object[]{
+        Object[][] tableData = newData.stream().map(hotel -> new Object[] {
                 hotel.getId(),
                 hotel.getName(),
                 hotel.getPhone(),
@@ -179,10 +180,10 @@ public class ListView {
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBackground(Color.white);
         JTextField searchField = createSearchField();
-        //JButton searchButton = createSearchButton(searchField);
+        // JButton searchButton = createSearchButton(searchField);
 
         searchPanel.add(createSearchFieldPanel(searchField), BorderLayout.CENTER);
-        //searchPanel.add(createSearchButtonPanel(searchButton), BorderLayout.EAST);
+        // searchPanel.add(createSearchButtonPanel(searchButton), BorderLayout.EAST);
         return searchPanel;
     }
 
@@ -301,16 +302,16 @@ public class ListView {
         nextButton.setPreferredSize(new Dimension(100, 30));
         leftFooterPanel.add(nextButton);
 
-        //page size combo box
-        String[] pageSizes = {"10", "20", "50", "100"};
+        // page size combo box
+        String[] pageSizes = { "10", "20", "50", "100" };
         JComboBox<String> pageSizeComboBox = new JComboBox<>(pageSizes);
         pageSizeComboBox.setSelectedIndex(0);
 
         pageSizeComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JComboBox cb = (JComboBox)e.getSource();
-                itemsPerPage = Integer.parseInt((String)cb.getSelectedItem());
+                JComboBox cb = (JComboBox) e.getSource();
+                itemsPerPage = Integer.parseInt((String) cb.getSelectedItem());
                 doSearch(searchTerm);
             }
         });
@@ -321,7 +322,7 @@ public class ListView {
     }
 
     private void handleCreateButtonClick() {
-        //TODO: Open create view
+        // TODO: Open create view
         DetailsView detailsView = new DetailsView();
         detailsView.setVisible(true);
 
@@ -334,8 +335,9 @@ public class ListView {
         if (selectedRow != -1) {
             int hotelId = (int) table.getValueAt(selectedRow, 0);
             Hotel hotel = hotelController.getById(hotelId);
-            //CONFIRMATION
-            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + hotel.getName() + "?", "Warning", JOptionPane.YES_NO_OPTION);
+            // CONFIRMATION
+            int dialogResult = JOptionPane.showConfirmDialog(null,
+                    "Are you sure you want to delete " + hotel.getName() + "?", "Warning", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
                 hotelController.delete(hotel);
                 doSearch(searchTerm);
@@ -343,16 +345,15 @@ public class ListView {
         }
     }
 
-    private void handleDetailsButtonClick()
-    {
+    private void handleDetailsButtonClick() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
             int hotelId = (int) table.getValueAt(selectedRow, 0);
             Hotel hotel = hotelController.getById(hotelId);
 
-            //System.out.println(hotel.getName());
+            // System.out.println(hotel.getName());
 
-            //TODO: Open details view
+            // TODO: Open details view
             DetailsView detailsView = new DetailsView(hotel.getId());
         }
     }

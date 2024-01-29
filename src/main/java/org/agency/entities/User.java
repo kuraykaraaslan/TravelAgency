@@ -15,7 +15,7 @@ public class User {
     private int createdBy;
     private int updatedBy;
     private Integer deletedBy; // Use Integer for nullable columns
-    private String role;  // ADMIN or AGENT
+    private String role; // ADMIN or AGENT
 
     // Constructors
 

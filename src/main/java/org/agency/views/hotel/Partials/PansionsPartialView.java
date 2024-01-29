@@ -26,7 +26,7 @@ public class PansionsPartialView {
 
     private JTable table;
 
-    private String[] columns = { "ID", "Name"};
+    private String[] columns = { "ID", "Name" };
 
     private HashMap<String, Object> filters = new HashMap<>();
 
@@ -45,53 +45,48 @@ public class PansionsPartialView {
         headerSearchPanel.setLayout(new FlowLayout());
         headerSearchPanel.setBackground(Color.white);
 
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.setPreferredSize(new Dimension(100, 30));
+        refreshButton.setMaximumSize(new Dimension(100, 30));
+        refreshButton.setMinimumSize(new Dimension(100, 30));
 
+        refreshButton.setToolTipText("Refresh");
 
-            JButton refreshButton = new JButton("Refresh");
-            refreshButton.setPreferredSize(new Dimension(100, 30));
-            refreshButton.setMaximumSize(new Dimension(100, 30));
-            refreshButton.setMinimumSize(new Dimension(100, 30));
+        refreshButton.addActionListener(e -> {
+            filters.clear();
+            filters.put("hotel_id", hotel.getId());
+            List<Pansion> pansions = pansionController.getByHotelId(hotel.getId());
 
-            refreshButton.setToolTipText("Refresh");
+            Object[][] data = new Object[pansions.size()][columns.length];
 
-            refreshButton.addActionListener(e -> {
-                filters.clear();
-                filters.put("hotel_id", hotel.getId());
-                List< Pansion > pansions = pansionController.getByHotelId(hotel.getId());
+            for (int i = 0; i < pansions.size(); i++) {
+                Pansion pansion = pansions.get(i);
+                data[i][0] = pansion.getId();
+                data[i][1] = pansion.getName();
+            }
 
-                Object[][] data = new Object[pansions.size()][columns.length];
+            DefaultTableModel model = new DefaultTableModel(data, columns);
 
-                for (int i = 0; i < pansions.size(); i++) {
-                    Pansion pansion = pansions.get(i);
-                    data[i][0] = pansion.getId();
-                    data[i][1] = pansion.getName();
-                }
+            table.setModel(model);
+        });
 
-                DefaultTableModel model = new DefaultTableModel(data, columns);
+        headerSearchPanel.add(refreshButton);
 
-                table.setModel(model);
-            });
+        JButton createButton = new JButton("Create");
+        createButton.setPreferredSize(new Dimension(100, 30));
+        createButton.setMaximumSize(new Dimension(100, 30));
+        createButton.setMinimumSize(new Dimension(100, 30));
+        createButton.setToolTipText("Create");
+        createButton.addActionListener(e -> {
+            Pansion pansion = new Pansion();
+            pansion.setHotelId(hotel.getId());
+            org.agency.views.pansion.DetailsView detailsView = new org.agency.views.pansion.DetailsView(pansion);
+        });
 
-            headerSearchPanel.add(refreshButton);
-
-
-            JButton createButton = new JButton("Create");
-            createButton.setPreferredSize(new Dimension(100, 30));
-            createButton.setMaximumSize(new Dimension(100, 30));
-            createButton.setMinimumSize(new Dimension(100, 30));
-            createButton.setToolTipText("Create");
-            createButton.addActionListener(e -> {
-                        Pansion pansion = new Pansion();
-                        pansion.setHotelId(hotel.getId());
-                        org.agency.views.pansion.DetailsView detailsView = new org.agency.views.pansion.DetailsView(pansion);
-                    }
-            );
-
-            headerSearchPanel.add(createButton);
+        headerSearchPanel.add(createButton);
 
         return headerSearchPanel;
     }
-
 
     public JPanel render() {
         JPanel panel = new JPanel();
@@ -126,8 +121,9 @@ public class PansionsPartialView {
             int row = table.getSelectedRow();
             int pansionId = (int) table.getModel().getValueAt(row, 0);
             Pansion pansion = pansionController.getById(pansionId);
-            //Confirm dialog
-            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this pansion?", "Warning", JOptionPane.YES_NO_OPTION);
+            // Confirm dialog
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this pansion?",
+                    "Warning", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
                 pansionController.delete(pansion);
                 JOptionPane.showMessageDialog(null, "Pansion deleted successfully.");
@@ -141,7 +137,7 @@ public class PansionsPartialView {
 
         table.setComponentPopupMenu(popupMenu);
 
-        //Disable editing
+        // Disable editing
         table.setDefaultEditor(Object.class, null);
 
         JScrollPane scrollPane = new JScrollPane(table);

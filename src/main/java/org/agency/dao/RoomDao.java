@@ -24,7 +24,8 @@ public class RoomDao {
                 "has_valuables_safe, has_gaming_console, has_projector, hotel_id, season_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query,
+                Statement.RETURN_GENERATED_KEYS)) {
             setParameters(preparedStatement, room);
 
             int affectedRows = preparedStatement.executeUpdate();
@@ -68,7 +69,7 @@ public class RoomDao {
         String query = "SELECT * FROM rooms ORDER BY id ASC";
 
         try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+                ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 rooms.add(mapResultSetToRoom(resultSet));
             }
@@ -120,7 +121,6 @@ public class RoomDao {
         return room;
     }
 
-
     private void handleSQLException(SQLException e) {
         e.printStackTrace();
         // Handle exceptions as needed
@@ -131,7 +131,6 @@ public class RoomDao {
                 "adult_price = ?, child_price = ?, square_meters = ?, has_television = ?, has_balcony = ?, " +
                 "has_air_conditioning = ?, has_minibar = ?, has_valuables_safe = ?, has_gaming_console = ?, " +
                 "has_projector = ?, hotel_id = ?, season_id = ? WHERE id = ?";
-
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setParameters(preparedStatement, room);

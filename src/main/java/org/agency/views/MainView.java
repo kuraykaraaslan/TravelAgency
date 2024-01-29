@@ -67,8 +67,8 @@ public class MainView {
         usersButton.addActionListener(e -> new org.agency.views.user.ListView());
         exitButton.addActionListener(e -> System.exit(0));
 
-        //if user is not admin, disable users and hotels buttons
-        if(!Main.getSession().isAdmin()){
+        // if user is not admin, disable users and hotels buttons
+        if (!Main.getSession().isAdmin()) {
             usersButton.setEnabled(false);
         }
 
@@ -82,10 +82,9 @@ public class MainView {
         //
         mainBox.add(Box.createVerticalStrut(10)); // Add vertical gap
         mainBox.add(usersButton);
-        //exits the program
+        // exits the program
         mainBox.add(Box.createVerticalStrut(10)); // Add vertical gap
         mainBox.add(exitButton);
-
 
         mainBox.add(Box.createVerticalGlue());
     }

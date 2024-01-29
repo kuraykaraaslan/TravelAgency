@@ -26,8 +26,6 @@ public class DetailsView {
     public HotelController hotelController = new HotelController();
     public PansionController pansionController = new PansionController();
 
-
-
     public DetailsView(Pansion model) {
         this.pansion = (Pansion) model;
 
@@ -40,7 +38,6 @@ public class DetailsView {
         configureFrame(this.frame);
         this.frame.setVisible(true);
     }
-
 
     public DetailsView() {
         DetailsView DetailsView = new DetailsView(new Pansion());
@@ -61,15 +58,15 @@ public class DetailsView {
         mainPanel.add(namePanel());
 
         /*
-            private boolean breakfast;
-            private boolean lunch;
-            private boolean dinner;
-            private boolean midnightSnack;
-            private boolean softDrinks;
-            private boolean alcoholicDrinks;
-            private boolean snacks;
-
-            checkboxs
+         * private boolean breakfast;
+         * private boolean lunch;
+         * private boolean dinner;
+         * private boolean midnightSnack;
+         * private boolean softDrinks;
+         * private boolean alcoholicDrinks;
+         * private boolean snacks;
+         * 
+         * checkboxs
          */
 
         JPanel CheckBoxPanel = new JPanel();
@@ -77,7 +74,7 @@ public class DetailsView {
         CheckBoxPanel.setBorder(BorderFactory.createTitledBorder("Pansion"));
         CheckBoxPanel.setPreferredSize(new Dimension(400, 30));
 
-        //breakfast
+        // breakfast
         JPanel breakfastPanel = new JPanel();
         JLabel breakfastLabel = new JLabel("Breakfast");
         breakfastLabel.setPreferredSize(labelDimension);
@@ -96,7 +93,7 @@ public class DetailsView {
         breakfastPanel.add(breakfastField);
         CheckBoxPanel.add(breakfastPanel);
 
-        //lunch
+        // lunch
         JPanel lunchPanel = new JPanel();
         JLabel lunchLabel = new JLabel("Lunch");
         lunchLabel.setPreferredSize(labelDimension);
@@ -116,7 +113,7 @@ public class DetailsView {
         lunchPanel.add(lunchField);
         CheckBoxPanel.add(lunchPanel);
 
-        //dinner
+        // dinner
 
         JPanel dinnerPanel = new JPanel();
         JLabel dinnerLabel = new JLabel("Dinner");
@@ -138,7 +135,7 @@ public class DetailsView {
 
         CheckBoxPanel.add(dinnerPanel);
 
-        //midnightSnack
+        // midnightSnack
 
         JPanel midnightSnackPanel = new JPanel();
         JLabel midnightSnackLabel = new JLabel("Midnight Snack");
@@ -160,7 +157,7 @@ public class DetailsView {
 
         CheckBoxPanel.add(midnightSnackPanel);
 
-        //softDrinks
+        // softDrinks
 
         JPanel softDrinksPanel = new JPanel();
         JLabel softDrinksLabel = new JLabel("Soft Drinks");
@@ -180,10 +177,9 @@ public class DetailsView {
         softDrinksPanel.add(softDrinksLabel);
         softDrinksPanel.add(softDrinksField);
 
-
         CheckBoxPanel.add(softDrinksPanel);
 
-        //alcoholicDrinks
+        // alcoholicDrinks
 
         JPanel alcoholicDrinksPanel = new JPanel();
         JLabel alcoholicDrinksLabel = new JLabel("Alcoholic Drinks");
@@ -205,7 +201,7 @@ public class DetailsView {
 
         CheckBoxPanel.add(alcoholicDrinksPanel);
 
-        //snacks
+        // snacks
 
         JPanel snacksPanel = new JPanel();
         JLabel snacksLabel = new JLabel("Snacks");
@@ -228,14 +224,9 @@ public class DetailsView {
 
         CheckBoxPanel.add(snacksPanel);
 
-
-
-        //end checkboxs
+        // end checkboxs
 
         mainPanel.add(CheckBoxPanel);
-
-
-
 
         // Buttons Panel
         JPanel buttonsPanel = new JPanel();
@@ -261,13 +252,15 @@ public class DetailsView {
         namePanel.setLayout(new FlowLayout());
         JLabel nameLabel = new JLabel("Name");
         nameLabel.setPreferredSize(labelDimension);
-        //JTextField nameField = new JTextField(pansion.getName(), 20);
+        // JTextField nameField = new JTextField(pansion.getName(), 20);
 
-        //('BED_AND_BREAKFAST', 'HALF_BOARD', 'FULL_BOARD', 'ALL_INCLUSIVE', 'ULTRA_ALL_INCLUSIVE', 'BED_ONLY' , 'ALL_INCLUSIVE_NO_ALCOHOL'
+        // ('BED_AND_BREAKFAST', 'HALF_BOARD', 'FULL_BOARD', 'ALL_INCLUSIVE',
+        // 'ULTRA_ALL_INCLUSIVE', 'BED_ONLY' , 'ALL_INCLUSIVE_NO_ALCOHOL'
 
-        JComboBox nameField = new JComboBox(new String[]{"BED_AND_BREAKFAST", "HALF_BOARD", "FULL_BOARD", "ALL_INCLUSIVE", "ULTRA_ALL_INCLUSIVE", "BED_ONLY" , "ALL_INCLUSIVE_NO_ALCOHOL"});
+        JComboBox nameField = new JComboBox(new String[] { "BED_AND_BREAKFAST", "HALF_BOARD", "FULL_BOARD",
+                "ALL_INCLUSIVE", "ULTRA_ALL_INCLUSIVE", "BED_ONLY", "ALL_INCLUSIVE_NO_ALCOHOL" });
 
-        //select first
+        // select first
         nameField.setSelectedIndex(0);
         nameField.setPreferredSize(new Dimension(200, 30));
         nameField.addActionListener(new java.awt.event.ActionListener() {
@@ -298,21 +291,21 @@ public class DetailsView {
         JLabel hotelIdLabel = new JLabel("Hotel Name");
         hotelIdLabel.setPreferredSize(new Dimension(100, 30));
 
-        //get hotels from database
+        // get hotels from database
         List<Hotel> hotels = hotelController.getAll();
 
-        //create model and add hotels to it
+        // create model and add hotels to it
         DefaultComboBoxModel<Hotel> model = new DefaultComboBoxModel<>();
 
         for (Hotel hotel : hotels) {
             model.addElement(hotel.getId() == 0 ? new Hotel() : hotel);
         }
 
-        //custom renderer
+        // custom renderer
         ListCellRenderer<? super Hotel> renderer = new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                          boolean isSelected, boolean cellHasFocus) {
+                    boolean isSelected, boolean cellHasFocus) {
 
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -323,7 +316,6 @@ public class DetailsView {
                 return this;
             }
         };
-
 
         JComboBox<Hotel> hotelIdField = new JComboBox<>(model);
 
@@ -354,7 +346,6 @@ public class DetailsView {
         return hotelIdPanel;
     }
 
-
     private void handleSaveButton(ActionEvent evt) {
         if (pansion.getId() == 0) {
             pansionController.create(pansion);
@@ -367,7 +358,6 @@ public class DetailsView {
     private void handleExitButton(ActionEvent evt) {
         frame.dispose();
     }
-
 
     public static void main(String[] args) {
         DetailsView viewPansion = new DetailsView();

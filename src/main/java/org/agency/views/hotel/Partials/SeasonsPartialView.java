@@ -161,7 +161,6 @@ public class SeasonsPartialView {
         panel.setLayout(new BorderLayout());
         panel.setBackground(Color.white);
 
-    
         List<Season> seasons = seasonController.getAllByHotelId(hotel.getId());
 
         Object[][] data = new Object[seasons.size()][columns.length];

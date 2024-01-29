@@ -1,10 +1,11 @@
 package org.agency.entities;
+
 import java.util.Date;
 
 public class Pansion {
 
     private int id;
-    private String name; //BED_
+    private String name; // BED_
     private boolean breakfast;
     private boolean lunch;
     private boolean dinner;

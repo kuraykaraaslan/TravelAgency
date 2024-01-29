@@ -24,8 +24,8 @@ public class RoomsPartialView {
     private JTable table;
     private JPopupMenu popupMenu;
 
-
-    private String[] columns = {"ID", "Room Number", "Double Bed Count", "Single Bed Count", "Adult Price", "Child Price", "Square Meters"};
+    private String[] columns = { "ID", "Room Number", "Double Bed Count", "Single Bed Count", "Adult Price",
+            "Child Price", "Square Meters" };
 
     private HashMap<String, Object> filters = new HashMap<>();
 
@@ -37,26 +37,24 @@ public class RoomsPartialView {
 
     }
 
-
     private JPanel headerSearchPanel() {
         JPanel headerSearchPanel = new JPanel();
         headerSearchPanel.setLayout(new FlowLayout());
         headerSearchPanel.setBackground(Color.white);
 
-
         /*
-            private String roomNumber;
-            private String type;
-            private int doubleBedCount;
-            private int singleBedCount;
-            private int squareMeters;
-            private boolean hasTelevision;
-            private boolean hasBalcony;
-            private boolean hasAirConditioning;
-            private boolean hasMinibar;
-            private boolean hasValuablesSafe;
-            private boolean hasGamingConsole;
-            private boolean hasProjector;
+         * private String roomNumber;
+         * private String type;
+         * private int doubleBedCount;
+         * private int singleBedCount;
+         * private int squareMeters;
+         * private boolean hasTelevision;
+         * private boolean hasBalcony;
+         * private boolean hasAirConditioning;
+         * private boolean hasMinibar;
+         * private boolean hasValuablesSafe;
+         * private boolean hasGamingConsole;
+         * private boolean hasProjector;
          */
 
         JTextField roomNumberField = new JTextField();
@@ -71,8 +69,9 @@ public class RoomsPartialView {
         headerSearchPanel.add(roomNumberLabel);
         headerSearchPanel.add(roomNumberField);
 
-        //SINGLE, DOUBLE, JUNIOR_SUITE, SUITE
-        JComboBox<String> typeField = new JComboBox<>(new String[]{"ALL","SINGLE", "DOUBLE", "JUNIOR_SUITE", "SUITE"});
+        // SINGLE, DOUBLE, JUNIOR_SUITE, SUITE
+        JComboBox<String> typeField = new JComboBox<>(
+                new String[] { "ALL", "SINGLE", "DOUBLE", "JUNIOR_SUITE", "SUITE" });
         typeField.setPreferredSize(new Dimension(100, 30));
         typeField.setMaximumSize(new Dimension(100, 30));
         typeField.setMinimumSize(new Dimension(100, 30));
@@ -84,7 +83,6 @@ public class RoomsPartialView {
         headerSearchPanel.add(typeLabel);
 
         headerSearchPanel.add(typeField);
-
 
         JTextField doubleBedCountField = new JTextField();
         doubleBedCountField.setPreferredSize(new Dimension(50, 30));
@@ -182,7 +180,6 @@ public class RoomsPartialView {
         headerSearchPanel.add(hasValuablesSafeLabel);
         headerSearchPanel.add(hasValuablesSafeField);
 
-
         JButton searchButton = new JButton("Search");
         searchButton.setPreferredSize(new Dimension(100, 30));
         searchButton.setMaximumSize(new Dimension(100, 30));
@@ -192,10 +189,10 @@ public class RoomsPartialView {
 
         searchButton.addActionListener(e -> {
 
-            //check for valid input
-            //if doubleBedCountField.getText() is not a number, show error message
-            //if singleBedCountField.getText() is not a number, show error message
-            //if squareMetersField.getText() is not a number, show error message
+            // check for valid input
+            // if doubleBedCountField.getText() is not a number, show error message
+            // if singleBedCountField.getText() is not a number, show error message
+            // if squareMetersField.getText() is not a number, show error message
 
             if (!doubleBedCountField.getText().isEmpty()) {
                 try {
@@ -224,22 +221,19 @@ public class RoomsPartialView {
                 }
             }
 
-
-
             filters.clear();
 
             filters.put("room_number", roomNumberField.getText());
-            if (typeField.getSelectedItem() != "ALL")
-            {
-            filters.put("type", typeField.getSelectedItem());
+            if (typeField.getSelectedItem() != "ALL") {
+                filters.put("type", typeField.getSelectedItem());
             }
-            if (!doubleBedCountField.getText().isEmpty()){
+            if (!doubleBedCountField.getText().isEmpty()) {
                 filters.put("double_bed_count", Integer.parseInt(doubleBedCountField.getText()));
             }
-            if (!singleBedCountField.getText().isEmpty()){
+            if (!singleBedCountField.getText().isEmpty()) {
                 filters.put("single_bed_count", Integer.parseInt(singleBedCountField.getText()));
             }
-            if (!squareMetersField.getText().isEmpty()){
+            if (!squareMetersField.getText().isEmpty()) {
                 filters.put("square_meters", Integer.parseInt(squareMetersField.getText()));
             }
             filters.put("has_television", hasTelevisionField.isSelected());
@@ -264,8 +258,7 @@ public class RoomsPartialView {
 
             table.setModel(new javax.swing.table.DefaultTableModel(
                     data,
-                    columns
-            ));
+                    columns));
         });
 
         JButton createButton = new JButton("Create");
@@ -288,7 +281,6 @@ public class RoomsPartialView {
 
         return headerSearchPanel;
     }
-
 
     public JPanel render() {
         JPanel panel = new JPanel();
@@ -327,8 +319,9 @@ public class RoomsPartialView {
             int row = table.getSelectedRow();
             int id = (int) table.getModel().getValueAt(row, 0);
             Room room = roomController.getById(id);
-            //Confirm delete
-            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this room?", "Warning", JOptionPane.YES_NO_OPTION);
+            // Confirm delete
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this room?",
+                    "Warning", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
                 roomController.delete(room);
                 RefreshParent.run();
@@ -340,18 +333,14 @@ public class RoomsPartialView {
 
         table.setComponentPopupMenu(popupMenu);
 
-        //Disable editing
+        // Disable editing
 
         table.setDefaultEditor(Object.class, null);
-
 
         JScrollPane scrollPane = new JScrollPane(table);
 
         panel.add(headerSearchPanel(), BorderLayout.NORTH);
         panel.add(scrollPane);
-
-
-
 
         return panel;
     }

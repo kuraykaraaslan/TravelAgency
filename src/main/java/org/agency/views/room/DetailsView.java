@@ -32,7 +32,6 @@ public class DetailsView {
     private JComboBox<Hotel> hotelComboBox;
     private JComboBox<Season> seasonComboBox;
 
-
     public DetailsView(Room model) {
         this.room = model;
 
@@ -48,7 +47,6 @@ public class DetailsView {
         frame.setVisible(true);
         frame.setResizable(false);
     }
-
 
     private void configureFrame(JFrame frame) {
         frame.setSize(400, 600);
@@ -72,7 +70,7 @@ public class DetailsView {
         mainPanel.add(gamingConsolePanel());
         mainPanel.add(projectorPanel());
 
-        //add hotelId and seasonId
+        // add hotelId and seasonId
 
         JPanel hotelIdPanel = new JPanel();
         JLabel hotelIdLabel = new JLabel("Hotel Id");
@@ -125,15 +123,13 @@ public class DetailsView {
             hotelComboBox.setSelectedItem(hotelController.getById(room.getHotelId()));
         }
 
-
-
         hotelIdPanel.add(hotelIdLabel);
 
         hotelIdPanel.add(hotelComboBox);
 
         mainPanel.add(hotelIdPanel);
 
-        //seasonId ComboBox
+        // seasonId ComboBox
 
         JPanel seasonIdPanel = new JPanel();
         JLabel seasonIdLabel = new JLabel("Season Id");
@@ -177,8 +173,6 @@ public class DetailsView {
         seasonIdPanel.add(seasonComboBox);
 
         mainPanel.add(seasonIdPanel);
-
-
 
         JButton saveButton = new JButton("Save");
         JButton deleteButton = new JButton("Delete");
@@ -301,7 +295,6 @@ public class DetailsView {
         return panel;
     }
 
-
     private JPanel televisionPanel() {
         JPanel panel = new JPanel();
         JLabel label = new JLabel("Television");
@@ -400,9 +393,8 @@ public class DetailsView {
         return panel;
     }
 
-
-
-    // Similar methods for other room details (type, double bed count, single bed count, etc.)
+    // Similar methods for other room details (type, double bed count, single bed
+    // count, etc.)
 
     public static void main(String[] args) {
         DetailsView view = new DetailsView(new Room());

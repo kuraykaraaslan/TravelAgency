@@ -144,7 +144,6 @@ public class UserDao {
         return users;
     }
 
-
     public boolean restore(User user) {
         String query = "UPDATE users SET deleted_at = NULL WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -176,7 +175,7 @@ public class UserDao {
         String query = "SELECT * FROM users WHERE deleted_at IS NOT NULL";
 
         try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+                ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 users.add(mapResultSetToUser(resultSet));
             }
@@ -239,8 +238,7 @@ public class UserDao {
 
         try (
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                PreparedStatement countStatement = connection.prepareStatement(countQuery)
-        ) {
+                PreparedStatement countStatement = connection.prepareStatement(countQuery)) {
             preparedStatement.setString(1, "%" + keyword + "%");
             preparedStatement.setString(2, "%" + keyword + "%");
             preparedStatement.setString(3, "%" + keyword + "%");

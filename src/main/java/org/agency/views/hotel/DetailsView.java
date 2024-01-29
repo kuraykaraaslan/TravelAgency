@@ -43,14 +43,13 @@ public class DetailsView extends Component {
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.white);
-        headerPanel.setPreferredSize(new Dimension(-1, 80));  // Use `setPreferredSize` instead of `setMaximumSize`
+        headerPanel.setPreferredSize(new Dimension(-1, 80)); // Use `setPreferredSize` instead of `setMaximumSize`
         headerPanel.add(createLogoPanel(), BorderLayout.WEST);
         headerPanel.add(createSummaryPanel(), BorderLayout.CENTER);
-        //headerPanel.add(createSearchPanel(), BorderLayout.CENTER);
-        //headerPanel.add(createButtonPanel(), BorderLayout.EAST);
+        // headerPanel.add(createSearchPanel(), BorderLayout.CENTER);
+        // headerPanel.add(createButtonPanel(), BorderLayout.EAST);
         return headerPanel;
     }
-
 
     private JTabbedPane createTabbedPane() {
         tabbedPane = new JTabbedPane();
@@ -60,7 +59,7 @@ public class DetailsView extends Component {
         createSeasonsPanel();
         createReservationsPanel();
         createPansionsPanel();
-        tabbedPane.addTab("Details", detailsPanel );
+        tabbedPane.addTab("Details", detailsPanel);
         if (hotel.getId() != 0) {
             tabbedPane.addTab("Rooms", roomsPanel);
             tabbedPane.addTab("Seasons", seasonsPanel);
@@ -70,7 +69,7 @@ public class DetailsView extends Component {
         return tabbedPane;
     }
 
-    private void createDetailsPanel(){
+    private void createDetailsPanel() {
         DetailsPartialView detailsPartialView = new DetailsPartialView(hotel, this::refresh, this::frameDispose);
         detailsPanel = detailsPartialView.getPanel();
     }
@@ -81,12 +80,13 @@ public class DetailsView extends Component {
     }
 
     private void createSeasonsPanel() {
-          SeasonsPartialView seasonsPartialView = new SeasonsPartialView(hotel, this::refresh, this::frameDispose);
-          seasonsPanel = seasonsPartialView.render();
+        SeasonsPartialView seasonsPartialView = new SeasonsPartialView(hotel, this::refresh, this::frameDispose);
+        seasonsPanel = seasonsPartialView.render();
     }
 
     private void createReservationsPanel() {
-        ReservationsPartialView reservationsPartialView = new ReservationsPartialView(hotel, this::refresh, this::frameDispose);
+        ReservationsPartialView reservationsPartialView = new ReservationsPartialView(hotel, this::refresh,
+                this::frameDispose);
         reservationsPanel = reservationsPartialView.render();
     }
 
@@ -94,7 +94,6 @@ public class DetailsView extends Component {
         PansionsPartialView pansionsPartialView = new PansionsPartialView(hotel, this::refresh, this::frameDispose);
         pansionsPanel = pansionsPartialView.render();
     }
-
 
     private JPanel createLogoPanel() {
         JPanel logoPanel = new JPanel();
@@ -122,13 +121,13 @@ public class DetailsView extends Component {
         summaryPanel.setBackground(Color.white);
         summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
         summaryPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
-        //add a label with the name
+        // add a label with the name
         JLabel nameLabel = new JLabel(hotel.getName());
         nameLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        //add a label with the address
+        // add a label with the address
         JLabel addressLabel = new JLabel(hotel.getAddressFull());
         addressLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        //add a label with the phone
+        // add a label with the phone
         JLabel phoneLabel = new JLabel(hotel.getPhone());
         phoneLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         summaryPanel.add(nameLabel);

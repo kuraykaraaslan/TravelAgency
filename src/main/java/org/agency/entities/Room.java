@@ -230,7 +230,6 @@ public class Room {
         this.pansionId = pansionId;
     }
 
-
     @Override
     public String toString() {
         return "Room{" +

@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-
 public class DetailsView {
 
     public JFrame frame = new JFrame("Season");
@@ -89,9 +88,10 @@ public class DetailsView {
 
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                //CONFIRMATION
+                // CONFIRMATION
                 JOptionPane confirmDialog = new JOptionPane();
-                int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this season?", "Warning", JOptionPane.YES_NO_OPTION);
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this season?",
+                        "Warning", JOptionPane.YES_NO_OPTION);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     seasonController.delete(season);
                     frame.dispose();
@@ -149,14 +149,13 @@ public class DetailsView {
             hotelIdField.setSelectedItem(hotelController.getById(season.getHotelId()));
         }
 
-
         hotelIdPanel.add(hotelIdLabel);
         hotelIdPanel.add(hotelIdField);
 
         return hotelIdPanel;
     }
 
-    //name panel
+    // name panel
     private JPanel namePanel() {
         JPanel namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout());
@@ -187,8 +186,6 @@ public class DetailsView {
 
         return namePanel;
     }
-
-
 
     private JPanel startDatePanel() {
         JPanel startDatePanel = new JPanel();
@@ -227,7 +224,6 @@ public class DetailsView {
             season.setEndDateLocalDate(endDate);
             System.out.println(season.getEndDateLocalDate());
         });
-
 
         endDatePanel.add(endDateLabel);
         endDatePanel.add(endDateField);

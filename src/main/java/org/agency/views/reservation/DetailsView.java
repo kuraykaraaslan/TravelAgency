@@ -42,7 +42,6 @@ public class DetailsView {
     public ArrayList<Pansion> pansions = new ArrayList<>();
     public ArrayList<Room> rooms = new ArrayList<>();
 
-
     public DetailsView(Reservation reservation) {
         this.reservation = reservation;
 
@@ -59,23 +58,20 @@ public class DetailsView {
         DetailsView detailsView = new DetailsView(new Reservation());
     }
 
-
-
-
     private void configureFrame(JFrame frame) {
 
         /*
-            private String guestCitizenId;
-            private String guestFullName;
-            private String guestEmail;
-            private String guestPhone;
-            private Date checkIn;
-            private Date checkOut;
-            private int adultCount;
-            private int childCount;
-            private double price;
-            private int hotelId;
-            private int roomId;
+         * private String guestCitizenId;
+         * private String guestFullName;
+         * private String guestEmail;
+         * private String guestPhone;
+         * private Date checkIn;
+         * private Date checkOut;
+         * private int adultCount;
+         * private int childCount;
+         * private double price;
+         * private int hotelId;
+         * private int roomId;
          */
 
         frame.setSize(500, 500);
@@ -292,7 +288,6 @@ public class DetailsView {
 
         panel.add(childCountPanel);
 
-
         // hotel id
 
         JPanel hotelPanel = new JPanel();
@@ -306,7 +301,7 @@ public class DetailsView {
         hotelComboBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                          boolean isSelected, boolean cellHasFocus) {
+                    boolean isSelected, boolean cellHasFocus) {
 
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -335,7 +330,7 @@ public class DetailsView {
         seasonComboBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                          boolean isSelected, boolean cellHasFocus) {
+                    boolean isSelected, boolean cellHasFocus) {
 
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -364,7 +359,7 @@ public class DetailsView {
         roomComboBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                          boolean isSelected, boolean cellHasFocus) {
+                    boolean isSelected, boolean cellHasFocus) {
 
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -394,7 +389,7 @@ public class DetailsView {
         pansionComboBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                          boolean isSelected, boolean cellHasFocus) {
+                    boolean isSelected, boolean cellHasFocus) {
 
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -420,7 +415,6 @@ public class DetailsView {
         JLabel priceField = new JLabel(String.valueOf(reservation.getPrice()));
         priceField.setPreferredSize(new Dimension(200, 20));
 
-
         pricePanel.add(priceLabel);
         pricePanel.add(priceField);
 
@@ -431,8 +425,8 @@ public class DetailsView {
         hotelComboBox.setModel(hotelComboBoxModel);
 
         if (reservation.getId() != 0) {
-           //restore fields from reservation
-           System.out.println(reservation);
+            // restore fields from reservation
+            System.out.println(reservation);
             hotelComboBox.setSelectedItem(hotelController.getById(reservation.getHotelId()));
 
             seasons = seasonController.getAllByHotelId(reservation.getHotelId());
@@ -445,7 +439,8 @@ public class DetailsView {
             pansionComboBox.setModel(pansionComboBoxModel);
             pansionComboBox.setSelectedItem(reservation.getPansion());
 
-            rooms = roomController.getByHotelAndSeasonIdAndPansionId(reservation.getHotelId(), reservation.getSeasonId(), reservation.getPansionId());
+            rooms = roomController.getByHotelAndSeasonIdAndPansionId(reservation.getHotelId(),
+                    reservation.getSeasonId(), reservation.getPansionId());
             roomComboBoxModel = new DefaultComboBoxModel<>(rooms.toArray(new Room[0]));
             roomComboBox.setModel(roomComboBoxModel);
             roomComboBox.setSelectedItem(reservation.getRoom());
@@ -455,18 +450,15 @@ public class DetailsView {
             priceField.setText(String.valueOf(reservation.getPrice()));
         }
 
-
-
-
         hotelComboBox.addActionListener(e -> {
             Hotel hotel = (Hotel) hotelComboBox.getSelectedItem();
             if (hotel == null) {
                 return;
             }
             // Clear the other combo boxes
-            //seasonComboBox.setEnabled(true);
-            //pansionComboBox.setEnabled(true);
-            //roomComboBox.setEnabled(true);
+            // seasonComboBox.setEnabled(true);
+            // pansionComboBox.setEnabled(true);
+            // roomComboBox.setEnabled(true);
 
             reservation.setHotelId(hotel.getId());
             seasons = seasonController.getAllByHotelId(hotel.getId());
@@ -509,7 +501,8 @@ public class DetailsView {
                 return;
             } else {
                 pansionComboBox.setEnabled(true);
-                ComboBoxModel<Pansion> pansionComboBoxModel1 = new DefaultComboBoxModel<>(pansions.toArray(new Pansion[0]));
+                ComboBoxModel<Pansion> pansionComboBoxModel1 = new DefaultComboBoxModel<>(
+                        pansions.toArray(new Pansion[0]));
                 pansionComboBox.setModel(pansionComboBoxModel1);
             }
 
@@ -526,7 +519,8 @@ public class DetailsView {
             roomComboBox.setSelectedIndex(-1);
 
             reservation.setPansionId(pansion.getId());
-            rooms = roomController.getByHotelAndSeasonIdAndPansionId(reservation.getHotelId(), reservation.getSeasonId(), reservation.getPansionId());
+            rooms = roomController.getByHotelAndSeasonIdAndPansionId(reservation.getHotelId(),
+                    reservation.getSeasonId(), reservation.getPansionId());
             if (rooms.size() == 0) {
                 JOptionPane.showMessageDialog(null, "No rooms found for this hotel.");
                 roomComboBox.setModel(new DefaultComboBoxModel<>());
@@ -540,14 +534,13 @@ public class DetailsView {
             }
         });
 
-
-        roomComboBox.addActionListener(e -> {          
+        roomComboBox.addActionListener(e -> {
             Room room = (Room) roomComboBox.getSelectedItem();
             if (room == null) {
                 return;
             }
             reservation.setRoomId(room.getId());
-            int price = calculatePrice(reservation,room,reservation.getAdultCount(),reservation.getChildCount());
+            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount());
             reservation.setPrice(price);
             priceField.setText(String.valueOf(price));
         });
@@ -558,7 +551,7 @@ public class DetailsView {
                 return;
             }
             reservation.setAdultCount((Integer) adultCountComboBox.getSelectedItem());
-            int price = calculatePrice(reservation,room,reservation.getAdultCount(),reservation.getChildCount());
+            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount());
             reservation.setPrice(price);
             priceField.setText(String.valueOf(price));
         });
@@ -569,13 +562,12 @@ public class DetailsView {
                 return;
             }
             reservation.setChildCount((Integer) childCountComboBox.getSelectedItem());
-            int price = calculatePrice(reservation,room,reservation.getAdultCount(),reservation.getChildCount());
+            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount());
             reservation.setPrice(price);
             priceField.setText(String.valueOf(price));
         });
 
-
-        //buttons
+        // buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(1, 2));
         JButton saveButton = new JButton("Save");
@@ -605,9 +597,10 @@ public class DetailsView {
         deleteButton.addActionListener(e -> {
             if (reservation.getId() == 0) {
             } else {
-               //Confirm delete
-                int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to delete this reservation?","Warning",JOptionPane.YES_NO_OPTION);
-                if(dialogResult == JOptionPane.YES_OPTION){
+                // Confirm delete
+                int dialogResult = JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to delete this reservation?", "Warning", JOptionPane.YES_NO_OPTION);
+                if (dialogResult == JOptionPane.YES_OPTION) {
                     reservation.setDeletedAt(new Date());
                     reservation.setDeletedBy(1);
                     reservationController.delete(reservation);
@@ -617,12 +610,11 @@ public class DetailsView {
             frame.dispose();
         });
 
-
         if (reservation.getId() == 0) {
             deleteButton.setEnabled(false);
         }
 
-        if(reservation.getHotelId() == 0){
+        if (reservation.getHotelId() == 0) {
             hotelComboBox.setSelectedItem((Hotel) hotelController.getById(reservation.getHotelId()));
             seasons = seasonController.getAllByHotelId(reservation.getHotelId());
             seasonComboBoxModel = new DefaultComboBoxModel<>(seasons.toArray(new Season[0]));
@@ -637,7 +629,6 @@ public class DetailsView {
             roomComboBox.setSelectedItem(roomController.getById(reservation.getRoomId()));
         }
 
-
         buttonPanel.add(saveButton);
         buttonPanel.add(deleteButton);
 
@@ -648,15 +639,11 @@ public class DetailsView {
         panel.add(pricePanel);
         panel.add(buttonPanel);
 
-
         frame.add(panel, BorderLayout.CENTER);
 
     }
 
-
-
-    public int calculatePrice(Reservation reservation,Room room, int adultCount, int childCount)
-    {
+    public int calculatePrice(Reservation reservation, Room room, int adultCount, int childCount) {
         int price = 0;
         if (reservation.getRoomId() == 0) {
             return price;
@@ -673,9 +660,6 @@ public class DetailsView {
         return price;
 
     }
-
-
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(DetailsView::new);

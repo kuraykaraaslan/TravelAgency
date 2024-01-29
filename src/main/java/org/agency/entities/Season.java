@@ -148,9 +148,6 @@ public class Season {
         this.hotelId = hotel.getId();
     }
 
-
-
-
     @Override
     public String toString() {
         return "Season{" +

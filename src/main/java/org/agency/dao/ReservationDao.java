@@ -26,7 +26,8 @@ public class ReservationDao {
                 "created_by, updated_by, deleted_by, hotel_id, room_id, pansion_id, status, season_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query,
+                Statement.RETURN_GENERATED_KEYS)) {
             setParameters(preparedStatement, reservation);
 
             int affectedRows = preparedStatement.executeUpdate();
@@ -65,7 +66,7 @@ public class ReservationDao {
         return null;
     }
 
-    //getByRoomId
+    // getByRoomId
     public ArrayList<Reservation> getByRoomId(int roomId) {
         ArrayList<Reservation> reservations = new ArrayList<>();
         String query = "SELECT * FROM reservations WHERE room_id = ?";
@@ -90,7 +91,7 @@ public class ReservationDao {
         String query = "SELECT * FROM reservations ORDER BY id ASC";
 
         try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+                ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 reservations.add(mapResultSetToReservation(resultSet));
             }
@@ -113,7 +114,8 @@ public class ReservationDao {
         preparedStatement.setDouble(9, reservation.getPrice());
         preparedStatement.setDate(10, new java.sql.Date(reservation.getCreatedAt().getTime()));
         preparedStatement.setDate(11, new java.sql.Date(reservation.getUpdatedAt().getTime()));
-        preparedStatement.setDate(12, reservation.getDeletedAt() != null ? new java.sql.Date(reservation.getDeletedAt().getTime()) : null);
+        preparedStatement.setDate(12,
+                reservation.getDeletedAt() != null ? new java.sql.Date(reservation.getDeletedAt().getTime()) : null);
         preparedStatement.setInt(13, reservation.getCreatedBy());
         preparedStatement.setInt(14, reservation.getUpdatedBy());
         preparedStatement.setInt(15, reservation.getDeletedBy() != null ? reservation.getDeletedBy() : 0);
@@ -157,8 +159,10 @@ public class ReservationDao {
     }
 
     public void update(Reservation reservation) {
-        String query = "UPDATE reservations SET guest_citizen_id = ?, guest_full_name = ?, guest_email = ?, guest_phone = ?, " +
-                "check_in = ?, check_out = ?, adult_count = ?, child_count = ?, price = ?, created_at = ?, updated_at = ?, deleted_at = ?, " +
+        String query = "UPDATE reservations SET guest_citizen_id = ?, guest_full_name = ?, guest_email = ?, guest_phone = ?, "
+                +
+                "check_in = ?, check_out = ?, adult_count = ?, child_count = ?, price = ?, created_at = ?, updated_at = ?, deleted_at = ?, "
+                +
                 "created_by = ?, updated_by = ?, deleted_by = ?, hotel_id = ?, room_id = ?, pansion_id = ?, status = ?, season_id = ? WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -174,7 +178,6 @@ public class ReservationDao {
             handleSQLException(e);
         }
     }
-
 
     public void delete(Reservation reservation) {
         String query = "DELETE FROM reservations WHERE id = ?";
@@ -207,7 +210,8 @@ public class ReservationDao {
         }
 
         if (filters.containsKey("check_in")) {
-            //org.postgresql.util.PSQLException: ERROR: operator does not exist: date >= integer
+            // org.postgresql.util.PSQLException: ERROR: operator does not exist: date >=
+            // integer
             query += "check_in > " + filters.get("check_in") + " AND ";
         }
 
@@ -279,8 +283,7 @@ public class ReservationDao {
 
         try (
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                PreparedStatement countStatement = connection.prepareStatement(countQuery)
-        ) {
+                PreparedStatement countStatement = connection.prepareStatement(countQuery)) {
             preparedStatement.setString(1, "%" + keyword + "%");
             preparedStatement.setString(2, "%" + keyword + "%");
             preparedStatement.setString(3, "%" + keyword + "%");
@@ -342,4 +345,3 @@ public class ReservationDao {
         return paginate(offset, limit, null);
     }
 }
-

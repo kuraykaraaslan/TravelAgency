@@ -49,16 +49,15 @@ public class ReservationsPartialView {
         headerSearchPanel.setLayout(new FlowLayout());
         headerSearchPanel.setBackground(Color.white);
 
-
         /*
-            private String guestCitizenId;
-            private String guestFullName;
-            private String guestEmail;
-            private String guestPhone;
-            private Date checkIn;
-            private Date checkOut;
-
-            private String status;
+         * private String guestCitizenId;
+         * private String guestFullName;
+         * private String guestEmail;
+         * private String guestPhone;
+         * private Date checkIn;
+         * private Date checkOut;
+         * 
+         * private String status;
          */
 
         JLabel citizenIdLabel = new JLabel("Citizen ID");
@@ -110,7 +109,8 @@ public class ReservationsPartialView {
         statusLabel.setToolTipText("Status");
         headerSearchPanel.add(statusLabel);
 
-        JComboBox statusField = new JComboBox( new String[] { "ALL", "PENDING", "CONFIRMED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED" } );
+        JComboBox statusField = new JComboBox(
+                new String[] { "ALL", "PENDING", "CONFIRMED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED" });
         statusField.setPreferredSize(new Dimension(100, 30));
         statusField.setMaximumSize(new Dimension(100, 30));
         statusField.setMinimumSize(new Dimension(100, 30));
@@ -153,83 +153,78 @@ public class ReservationsPartialView {
         searchButton.setToolTipText("Search");
         headerSearchPanel.add(searchButton);
 
-
         searchButton.addActionListener(e -> {
 
-                //check for valid input
-                //if START DATE is after END DATE
-                if (checkInField.getDate() != null && checkOutField.getDate() != null) {
-                    if (checkInField.getDate().isAfter(checkOutField.getDate())) {
-                        JOptionPane.showMessageDialog(null, "Start date cannot be after end date");
-                        return;
-                    }
+            // check for valid input
+            // if START DATE is after END DATE
+            if (checkInField.getDate() != null && checkOutField.getDate() != null) {
+                if (checkInField.getDate().isAfter(checkOutField.getDate())) {
+                    JOptionPane.showMessageDialog(null, "Start date cannot be after end date");
+                    return;
                 }
+            }
 
-                filters.clear();
+            filters.clear();
 
-                if (citizenIdField.getText().length() > 0) {
-                    filters.put("guest_citizen_id", citizenIdField.getText());
+            if (citizenIdField.getText().length() > 0) {
+                filters.put("guest_citizen_id", citizenIdField.getText());
+            }
+            if (fullNameField.getText().length() > 0) {
+                filters.put("guest_full_name", fullNameField.getText());
+            }
+
+            if (contactField.getText().length() > 0) {
+                // if contact is a number
+                try {
+                    Integer.parseInt(contactField.getText());
+                    filters.put("guest_phone", contactField.getText());
+                } catch (NumberFormatException ex) {
+                    filters.put("guest_email", contactField.getText());
                 }
-                if (fullNameField.getText().length() > 0) {
-                    filters.put("guest_full_name", fullNameField.getText());
-                }
+            }
 
-                if (contactField.getText().length() > 0) {
-                    //if contact is a number
-                    try {
-                        Integer.parseInt(contactField.getText());
-                        filters.put("guest_phone", contactField.getText());
-                    } catch (NumberFormatException ex) {
-                        filters.put("guest_email", contactField.getText());
-                    }
-                }
+            // add hotel id to filters
+            filters.put("hotel_id", hotel.getId());
 
-                //add hotel id to filters
-                filters.put("hotel_id", hotel.getId());
+            List<Reservation> reservations = reservationController.getByFilters(filters);
+            Object[][] data = new Object[reservations.size()][columns.length];
 
+            for (int i = 0; i < reservations.size(); i++) {
+                Reservation reservation = reservations.get(i);
+                data[i][0] = reservation.getId();
+                data[i][1] = reservation.getGuestFullName();
+                data[i][2] = reservation.getGuestPhone();
+                data[i][3] = reservation.getGuestEmail();
+                data[i][4] = reservation.getCheckIn() + " - " + reservation.getCheckOut();
+                data[i][5] = reservation.getAdultCount() + reservation.getChildCount();
+                data[i][6] = roomController.getById(reservation.getRoomId()).getRoomNumber();
+                data[i][7] = reservation.getPrice();
+                data[i][8] = reservation.getStatus();
+            }
 
-                List<Reservation> reservations = reservationController.getByFilters(filters);
-                    Object[][] data = new Object[reservations.size()][columns.length];
+            table.setModel(new DefaultTableModel(
+                    data,
+                    columns));
 
-                    for (int i = 0; i < reservations.size(); i++) {
-                        Reservation reservation = reservations.get(i);
-                        data[i][0] = reservation.getId();
-                        data[i][1] = reservation.getGuestFullName();
-                        data[i][2] = reservation.getGuestPhone();
-                        data[i][3] = reservation.getGuestEmail();
-                        data[i][4] = reservation.getCheckIn() + " - " + reservation.getCheckOut();
-                        data[i][5] = reservation.getAdultCount() + reservation.getChildCount();
-                        data[i][6] = roomController.getById(reservation.getRoomId()).getRoomNumber();
-                        data[i][7] = reservation.getPrice();
-                        data[i][8] = reservation.getStatus();
-                    }
+            table.repaint();
+        });
 
-                    table.setModel(new DefaultTableModel(
-                            data,
-                            columns
-                    ));
+        JButton createButton = new JButton("Create");
+        createButton.setPreferredSize(new Dimension(100, 30));
+        createButton.setMaximumSize(new Dimension(100, 30));
+        createButton.setMinimumSize(new Dimension(100, 30));
+        createButton.setToolTipText("Create");
+        createButton.addActionListener(e -> {
+            Reservation reservation = new Reservation();
+            reservation.setHotelId(hotel.getId());
+            org.agency.views.reservation.DetailsView detailsView = new org.agency.views.reservation.DetailsView(
+                    reservation);
+        });
 
-table.repaint();
-                }
-            );
-
-            JButton createButton = new JButton("Create");
-            createButton.setPreferredSize(new Dimension(100, 30));
-            createButton.setMaximumSize(new Dimension(100, 30));
-            createButton.setMinimumSize(new Dimension(100, 30));
-            createButton.setToolTipText("Create");
-            createButton.addActionListener(e -> {
-                        Reservation reservation = new Reservation();
-                        reservation.setHotelId(hotel.getId());
-                        org.agency.views.reservation.DetailsView detailsView = new org.agency.views.reservation.DetailsView(reservation);
-                    }
-            );
-
-            headerSearchPanel.add(createButton);
+        headerSearchPanel.add(createButton);
 
         return headerSearchPanel;
     }
-
 
     public JPanel render() {
         JPanel panel = new JPanel();
@@ -257,8 +252,7 @@ table.repaint();
 
         table.setModel(new DefaultTableModel(
                 data,
-                columns
-        ));
+                columns));
 
         popupMenu = new JPopupMenu();
 
@@ -267,7 +261,8 @@ table.repaint();
             int row = table.getSelectedRow();
             int id = (int) table.getModel().getValueAt(row, 0);
             Reservation reservation = reservationController.getById(id);
-            org.agency.views.reservation.DetailsView detailsView = new org.agency.views.reservation.DetailsView(reservation);
+            org.agency.views.reservation.DetailsView detailsView = new org.agency.views.reservation.DetailsView(
+                    reservation);
         });
 
         JMenuItem deleteMenuItem = new JMenuItem("Delete");
@@ -276,7 +271,8 @@ table.repaint();
             int id = (int) table.getModel().getValueAt(row, 0);
             Reservation reservation = reservationController.getById(id);
             // Confirm delete
-            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this reservation?", "Warning", JOptionPane.YES_NO_OPTION);
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this reservation?",
+                    "Warning", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
                 reservationController.delete(reservation);
                 RefreshParent.run();
@@ -288,7 +284,7 @@ table.repaint();
 
         table.setComponentPopupMenu(popupMenu);
 
-        //disable editing
+        // disable editing
         table.setDefaultEditor(Object.class, null);
 
         JScrollPane scrollPane = new JScrollPane(table);

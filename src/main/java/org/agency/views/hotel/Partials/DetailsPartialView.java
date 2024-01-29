@@ -57,9 +57,9 @@ public class DetailsPartialView {
         JPanel addressFullPanel = new JPanel();
         addressFullPanel.setLayout(new GridLayout(1, 2));
         JLabel addressFullLabel = new JLabel("Address Full: ");
-addressFullLabel.setPreferredSize(new Dimension(100, 20));
+        addressFullLabel.setPreferredSize(new Dimension(100, 20));
         JTextField addressFullField = new JTextField(hotel.getAddressFull());
-addressFullField.setPreferredSize(new Dimension(200, 20));
+        addressFullField.setPreferredSize(new Dimension(200, 20));
         addressFullField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 update();
@@ -265,7 +265,7 @@ addressFullField.setPreferredSize(new Dimension(200, 20));
         emailPanel.add(emailField);
         panel.add(emailPanel);
 
-        //Radio buttons for star rating
+        // Radio buttons for star rating
         JPanel starRatingPanel = new JPanel();
         starRatingPanel.setLayout(new GridLayout(1, 2));
         JLabel starRatingLabel = new JLabel("Star Rating: ");
@@ -327,7 +327,6 @@ addressFullField.setPreferredSize(new Dimension(200, 20));
                 break;
         }
 
-
         panel.add(createCheckBoxPanel("Has Car Park: ", hotel.isHasCarPark()));
         panel.add(createCheckBoxPanel("Has Internet: ", hotel.isHasInternet()));
         panel.add(createCheckBoxPanel("Has Pool: ", hotel.isHasPool()));
@@ -336,7 +335,6 @@ addressFullField.setPreferredSize(new Dimension(200, 20));
         panel.add(createCheckBoxPanel("Has Room Service: ", hotel.isHasRoomService()));
 
         panel.add(starRatingPanel);
-
 
         JPanel buttonPanel = new JPanel();
         JButton saveButton = new JButton("Save");
@@ -353,11 +351,12 @@ addressFullField.setPreferredSize(new Dimension(200, 20));
 
         });
 
-        //delete button
+        // delete button
         JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener(e -> {
             // Confirm deletion
-            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this hotel?", "Warning", JOptionPane.YES_NO_OPTION);
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this hotel?",
+                    "Warning", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
                 hotelController.delete(hotel);
                 JOptionPane.showMessageDialog(null, "Hotel deleted successfully!");

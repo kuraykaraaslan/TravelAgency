@@ -16,7 +16,11 @@ import org.agency.core.PaginatedResult;
 import org.agency.entities.User;
 
 public class ListView extends Component {
+
+    // Reference to the UserController from the Main class
     private UserController userController = Main.getUserController();
+
+    // UI components
     private JPanel mainPanel;
     private DefaultTableModel model;
     private static JTable table;
@@ -34,11 +38,16 @@ public class ListView extends Component {
     private JLabel pageNumberLabel;
 
     public ListView() {
+        // Create a new JFrame for the user list view
         JFrame frame = new JFrame("Users");
         configureFrame(frame);
+
+        // Create the main panel and add components to it
         mainPanel = new JPanel();
         placeComponents(mainPanel);
         frame.add(mainPanel);
+
+        // Refresh pagination buttons and make the frame visible
         paginationButtonRefresh();
         frame.setVisible(true);
     }
@@ -118,16 +127,17 @@ public class ListView extends Component {
     }
 
     private Object[][] getTableData() {
-        return userController.paginate(currentPage, itemsPerPage, searchTerm).getData().stream().map(user -> new Object[]{
-                user.getId(),
-                user.getUsername(),
-                user.getRole(),
-                user.getEmail()
-        }).toArray(Object[][]::new);
+        return userController.paginate(currentPage, itemsPerPage, searchTerm).getData().stream()
+                .map(user -> new Object[] {
+                        user.getId(),
+                        user.getUsername(),
+                        user.getRole(),
+                        user.getEmail()
+                }).toArray(Object[][]::new);
     }
 
     private String[] getColumnNames() {
-        return new String[]{"ID", "Username", "Role", "Email"};
+        return new String[] { "ID", "Username", "Role", "Email" };
     }
 
     private void handleTableRowSelection() {
@@ -157,7 +167,7 @@ public class ListView extends Component {
     }
 
     private void updateTableData(ArrayList<User> newData) {
-        Object[][] tableData = newData.stream().map(user -> new Object[]{
+        Object[][] tableData = newData.stream().map(user -> new Object[] {
                 user.getId(),
                 user.getUsername(),
                 user.getRole(),
@@ -172,10 +182,10 @@ public class ListView extends Component {
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBackground(Color.white);
         JTextField searchField = createSearchField();
-        //JButton searchButton = createSearchButton(searchField);
+        // JButton searchButton = createSearchButton(searchField);
 
         searchPanel.add(createSearchFieldPanel(searchField), BorderLayout.CENTER);
-        //searchPanel.add(createSearchButtonPanel(searchButton), BorderLayout.EAST);
+        // searchPanel.add(createSearchButtonPanel(searchButton), BorderLayout.EAST);
         return searchPanel;
     }
 
@@ -294,16 +304,16 @@ public class ListView extends Component {
         nextButton.setPreferredSize(new Dimension(100, 30));
         leftFooterPanel.add(nextButton);
 
-        //page size combo box
-        String[] pageSizes = {"10", "20", "50", "100"};
+        // page size combo box
+        String[] pageSizes = { "10", "20", "50", "100" };
         JComboBox<String> pageSizeComboBox = new JComboBox<>(pageSizes);
         pageSizeComboBox.setSelectedIndex(0);
 
         pageSizeComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JComboBox cb = (JComboBox)e.getSource();
-                itemsPerPage = Integer.parseInt((String)cb.getSelectedItem());
+                JComboBox cb = (JComboBox) e.getSource();
+                itemsPerPage = Integer.parseInt((String) cb.getSelectedItem());
                 doSearch(searchTerm);
             }
         });
@@ -317,7 +327,6 @@ public class ListView extends Component {
         DetailsView detailsView = new DetailsView();
         detailsView.setVisible(true);
 
-
         doSearch(searchTerm);
     }
 
@@ -327,8 +336,9 @@ public class ListView extends Component {
         if (selectedRow != -1) {
             int userId = (int) table.getValueAt(selectedRow, 0);
             User user = userController.getById(userId);
-            //CONFIRMATION
-            int dialogResult = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this user?", "Warning", JOptionPane.YES_NO_OPTION);
+            // CONFIRMATION
+            int dialogResult = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this user?",
+                    "Warning", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
                 userController.delete(user);
                 doSearch(searchTerm);
@@ -336,8 +346,7 @@ public class ListView extends Component {
         }
     }
 
-    private void handleDetailsButtonClick()
-    {
+    private void handleDetailsButtonClick() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
             int userId = (int) table.getValueAt(selectedRow, 0);

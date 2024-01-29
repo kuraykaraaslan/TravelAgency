@@ -26,7 +26,8 @@ public class SeasonDao {
         String query = "INSERT INTO seasons (name, start_date, end_date, hotel_id) " +
                 "VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query,
+                Statement.RETURN_GENERATED_KEYS)) {
             setParameters(preparedStatement, season);
 
             int affectedRows = preparedStatement.executeUpdate();
@@ -70,7 +71,7 @@ public class SeasonDao {
         String query = "SELECT * FROM seasons ORDER BY id ASC";
 
         try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+                ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 seasons.add(mapResultSetToSeason(resultSet));
             }
@@ -105,7 +106,7 @@ public class SeasonDao {
         if (resultSet.findColumn("hotel_id") != -1) {
             season.setHotelId(resultSet.getInt("hotel_id"));
         }
-    
+
         return season;
     }
 
@@ -147,7 +148,7 @@ public class SeasonDao {
         }
     }
 
-    //getAllByHotelId
+    // getAllByHotelId
     public ArrayList<Season> getAllByHotelId(int hotelId) {
         ArrayList<Season> seasons = new ArrayList<>();
         String query = "SELECT * FROM seasons WHERE hotel_id = ?";

@@ -68,9 +68,8 @@ The project consists of 3 main parts: **Hotel Management**, **User Management** 
     - Add new reservations by selecting available rooms and providing guest information.
     - Delete or update existing reservations.
 - **Security:**
-    - Passwords are stored in the database as hashes for security purposes.
     - Users are required to log in to the system with their credentials.
-    - The system is protected against SQL injection attacks.
+    - 
 ## Installation
 
 ### Clone
@@ -134,12 +133,10 @@ Include screenshots here to visually showcase the application's interface and fe
 ![Hotel Reservations](/static/hotel_reservations.png)
 
 
-
-
 ## Contributing
 
-Contributions are welcome! Please follow the [contribution guidelines](CONTRIBUTING.md).
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is a learning project developed under the guidance of [Patika.dev](https://www.patika.dev/). If you having same route with me, you can use this project as a reference.
