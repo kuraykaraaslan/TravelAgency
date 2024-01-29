@@ -49,9 +49,6 @@ public class DetailsView {
         frame.setResizable(false);
     }
 
-    public DetailsView() {
-        DetailsView view = new DetailsView(new Room());
-    }
 
     private void configureFrame(JFrame frame) {
         frame.setSize(400, 600);
@@ -151,6 +148,7 @@ public class DetailsView {
         }
 
         // custom renderer
+
         DefaultListCellRenderer seasonRenderer = new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -407,7 +405,7 @@ public class DetailsView {
     // Similar methods for other room details (type, double bed count, single bed count, etc.)
 
     public static void main(String[] args) {
-        DetailsView view = new DetailsView();
+        DetailsView view = new DetailsView(new Room());
     }
 
     // Other methods for creating panels for each property of Room entity

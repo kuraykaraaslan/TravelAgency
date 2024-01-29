@@ -23,8 +23,8 @@ public class ReservationDao {
     public void insert(Reservation reservation) {
         String query = "INSERT INTO reservations (guest_citizen_id, guest_full_name, guest_email, guest_phone, " +
                 "check_in, check_out, adult_count, child_count, price, created_at, updated_at, deleted_at, " +
-                "created_by, updated_by, deleted_by, hotel_id, room_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "created_by, updated_by, deleted_by, hotel_id, room_id, pansion_id, status, season_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             setParameters(preparedStatement, reservation);
@@ -65,9 +65,29 @@ public class ReservationDao {
         return null;
     }
 
-    public List<Reservation> getAll() {
-        List<Reservation> reservations = new ArrayList<>();
-        String query = "SELECT * FROM reservations";
+    //getByRoomId
+    public ArrayList<Reservation> getByRoomId(int roomId) {
+        ArrayList<Reservation> reservations = new ArrayList<>();
+        String query = "SELECT * FROM reservations WHERE room_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, roomId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    reservations.add(mapResultSetToReservation(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return reservations;
+    }
+
+    public ArrayList<Reservation> getAll() {
+        ArrayList<Reservation> reservations = new ArrayList<>();
+        String query = "SELECT * FROM reservations ORDER BY id ASC";
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
@@ -99,6 +119,9 @@ public class ReservationDao {
         preparedStatement.setInt(15, reservation.getDeletedBy() != null ? reservation.getDeletedBy() : 0);
         preparedStatement.setInt(16, reservation.getHotelId());
         preparedStatement.setInt(17, reservation.getRoomId());
+        preparedStatement.setInt(18, reservation.getPansionId());
+        preparedStatement.setString(19, reservation.getStatus());
+        preparedStatement.setInt(20, reservation.getSeasonId());
     }
 
     private Reservation mapResultSetToReservation(ResultSet resultSet) throws SQLException {
@@ -121,6 +144,9 @@ public class ReservationDao {
         reservation.setDeletedBy(resultSet.getInt("deleted_by"));
         reservation.setHotelId(resultSet.getInt("hotel_id"));
         reservation.setRoomId(resultSet.getInt("room_id"));
+        reservation.setPansionId(resultSet.getInt("pansion_id"));
+        reservation.setStatus(resultSet.getString("status"));
+        reservation.setSeasonId(resultSet.getInt("season_id"));
 
         return reservation;
     }
@@ -133,11 +159,11 @@ public class ReservationDao {
     public void update(Reservation reservation) {
         String query = "UPDATE reservations SET guest_citizen_id = ?, guest_full_name = ?, guest_email = ?, guest_phone = ?, " +
                 "check_in = ?, check_out = ?, adult_count = ?, child_count = ?, price = ?, created_at = ?, updated_at = ?, deleted_at = ?, " +
-                "created_by = ?, updated_by = ?, deleted_by = ?, hotel_id = ?, room_id = ? WHERE id = ?";
+                "created_by = ?, updated_by = ?, deleted_by = ?, hotel_id = ?, room_id = ?, pansion_id = ?, status = ?, season_id = ? WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setParameters(preparedStatement, reservation);
-            preparedStatement.setInt(18, reservation.getId());
+            preparedStatement.setInt(21, reservation.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -166,8 +192,8 @@ public class ReservationDao {
         }
     }
 
-    public List<Reservation> getByFilters(HashMap<String, Object> filters) {
-        List<Reservation> reservations = new ArrayList<>();
+    public ArrayList<Reservation> getByFilters(HashMap<String, Object> filters) {
+        ArrayList<Reservation> reservations = new ArrayList<>();
         String fullQuery = "SELECT * FROM reservations WHERE hotel_id = ? AND room_id = ? AND check_in >= ? AND check_out <= ? AND adult_count >= ? AND child_count >= ? AND price >= ? AND created_at >= ? AND updated_at >= ? AND deleted_at >= ? AND created_by >= ? AND updated_by >= ? AND deleted_by >= ?";
 
         String query = "SELECT * FROM reservations WHERE ";
@@ -181,10 +207,12 @@ public class ReservationDao {
         }
 
         if (filters.containsKey("check_in")) {
-            query += "check_in >= " + filters.get("check_in") + " AND ";
+            //org.postgresql.util.PSQLException: ERROR: operator does not exist: date >= integer
+            query += "check_in > " + filters.get("check_in") + " AND ";
         }
+
         if (filters.containsKey("check_out")) {
-            query += "check_out <= " + filters.get("check_out") + " AND ";
+            query += "check_out < " + filters.get("check_out") + " AND ";
         }
 
         if (filters.containsKey("guest_citizen_id")) {
@@ -234,7 +262,7 @@ public class ReservationDao {
 
     // Additions
     public PaginatedResult<Reservation> paginate(int offset, int limit, String keyword) {
-        List<Reservation> reservations = new ArrayList<>();
+        ArrayList<Reservation> reservations = new ArrayList<>();
 
         // Handle null keyword
         if (keyword == null) {
@@ -291,8 +319,8 @@ public class ReservationDao {
     }
 
     // GET BY HOTEL ID
-    public List<Reservation> getByHotelId(int hotelId) {
-        List<Reservation> reservations = new ArrayList<>();
+    public ArrayList<Reservation> getByHotelId(int hotelId) {
+        ArrayList<Reservation> reservations = new ArrayList<>();
         String query = "SELECT * FROM reservations WHERE hotel_id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {

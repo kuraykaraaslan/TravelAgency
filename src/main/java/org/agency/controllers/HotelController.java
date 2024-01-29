@@ -1,5 +1,6 @@
 package org.agency.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.agency.core.PaginatedResult;
@@ -24,7 +25,7 @@ public class HotelController {
         return hotelDao.getById(hotelId);
     }
 
-    public List<Hotel> getAll() {
+    public ArrayList<Hotel> getAll() {
         return hotelDao.getAll();
     }
 

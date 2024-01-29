@@ -267,11 +267,14 @@ public class DetailsView {
 
         JComboBox nameField = new JComboBox(new String[]{"BED_AND_BREAKFAST", "HALF_BOARD", "FULL_BOARD", "ALL_INCLUSIVE", "ULTRA_ALL_INCLUSIVE", "BED_ONLY" , "ALL_INCLUSIVE_NO_ALCOHOL"});
 
+        //select first
+        nameField.setSelectedIndex(0);
         nameField.setPreferredSize(new Dimension(200, 30));
         nameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 JComboBox cb = (JComboBox) evt.getSource();
                 String name = (String) cb.getSelectedItem();
+                System.out.println(name);
                 pansion.setName(name);
             }
         });

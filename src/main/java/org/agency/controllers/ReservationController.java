@@ -1,12 +1,16 @@
 package org.agency.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.agency.core.PaginatedResult;
 import org.agency.dao.ReservationDao;
+import org.agency.dao.SeasonDao;
+import org.agency.entities.Hotel;
 import org.agency.entities.Reservation;
 import org.agency.entities.Room;
+import org.agency.entities.Season;
 import org.agency.entities.User;
 
 public class ReservationController {
@@ -26,7 +30,7 @@ public class ReservationController {
         return reservationDao.getById(reservationId);
     }
 
-    public List<Reservation> getAll() {
+    public ArrayList<Reservation> getAll() {
         return reservationDao.getAll();
     }
 
@@ -42,7 +46,7 @@ public class ReservationController {
 
     //getByFilters
 
-    public List<Reservation> getByFilters(HashMap<String, Object> filters) {
+    public ArrayList<Reservation> getByFilters(HashMap<String, Object> filters) {
         return reservationDao.getByFilters(filters);
     }
 
@@ -55,6 +59,12 @@ public class ReservationController {
         int offset = (page - 1) * pageSize;
         int limit = offset + pageSize;
         return reservationDao.paginate(offset, limit);
+    }
+
+    //getByRoomId
+
+    public ArrayList<Reservation> getByRoomId(int roomId) {
+        return reservationDao.getByRoomId(roomId);
     }
 
     public PaginatedResult<Reservation> paginate(int page, int pageSize, String query) {

@@ -28,6 +28,8 @@ public class Room {
     private int hotelId;
     private int seasonId;
 
+    private int pansionId;
+
     // Constructors
 
     public Room() {
@@ -220,7 +222,13 @@ public class Room {
         this.seasonId = seasonId;
     }
 
+    public int getPansionId() {
+        return pansionId;
+    }
 
+    public void setPansionId(int pansionId) {
+        this.pansionId = pansionId;
+    }
 
 
     @Override
@@ -249,6 +257,7 @@ public class Room {
                 ", deletedBy=" + deletedBy +
                 ", hotelId=" + hotelId +
                 ", seasonId=" + seasonId +
+                ", pansionId=" + pansionId +
                 '}';
     }
 }

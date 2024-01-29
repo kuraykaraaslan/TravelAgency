@@ -4,6 +4,8 @@ import org.agency.core.PaginatedResult;
 import org.agency.dao.RoomDao;
 import org.agency.entities.Room;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class RoomController {
         return roomDao.getById(roomId);
     }
 
-    public List<Room> getAll() {
+    public ArrayList<Room> getAll() {
         return roomDao.getAll();
     }
 
@@ -33,17 +35,59 @@ public class RoomController {
         System.out.println("Room deleted successfully.");
     }
 
-    public List<Room> getByHotelId(int hotelId) {
+    public ArrayList<Room> getByHotelId(int hotelId) {
         return roomDao.getByHotelId(hotelId);
     }
 
-    public List<Room> getByHotelId(int hotelId, String query) {
+    public ArrayList<Room> getByHotelId(int hotelId, String query) {
         return roomDao.getByHotelId(hotelId, query);
     }
 
-    //getByFilters
+    //getByHotelAndSeasonId
+    public ArrayList<Room> getByHotelAndSeasonId(int hotelId, int seasonId) {
+        return roomDao.getByHotelAndSeasonId(hotelId, seasonId);
+    }
 
-    public List<Room> getByFilters(HashMap<String, Object> filters) {
+    //isRoomAvailable
+    public boolean isRoomAvailable(int roomId, LocalDate startDate, LocalDate endDate) {
+
+        //check for other reservations
+        org.agency.controllers.ReservationController reservationController = new org.agency.controllers.ReservationController();
+
+        //get all reservations for this room
+        ArrayList<org.agency.entities.Reservation> reservations = reservationController.getByRoomId(roomId);
+
+        //check if there are any reservations
+        if (reservations.size() > 0) {
+            for (org.agency.entities.Reservation reservation : reservations) {
+
+                LocalDate[] reservationDates = new LocalDate[2];
+                reservationDates[0] = reservation.getCheckInLocalDate();
+                reservationDates[1] = reservation.getCheckOutLocalDate();
+
+                LocalDate[] newReservationDates = new LocalDate[2];
+                newReservationDates[0] = startDate;
+                newReservationDates[1] = endDate;
+
+                //check if there is any reservation that overlaps with the new reservation
+                for (LocalDate date1 : reservationDates) {
+                    for (LocalDate date2 : newReservationDates) {
+                        if (!date1.isAfter(date2) && !date2.isAfter(date1)) {
+                            // Overlapping date found
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public ArrayList<Room> getByHotelAndSeasonIdAndPansionId(int hotelId, int seasonId, int pansionId) {
+        return roomDao.getByHotelAndSeasonIdAndPansionId(hotelId, seasonId, pansionId);
+    }
+
+    public ArrayList<Room> getByFilters(HashMap<String, Object> filters) {
         return roomDao.getByFilters(filters);
     }
 }

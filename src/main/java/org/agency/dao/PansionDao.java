@@ -19,9 +19,8 @@ public class PansionDao {
 
     public void insert(Pansion pansion) {
         String query = "INSERT INTO pansions (name, breakfast, lunch, dinner, midnight_snack, " +
-                "soft_drinks, alcoholic_drinks, snacks, created_at, updated_at, deleted_at, " +
-                "created_by, updated_by, deleted_by, hotel_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "soft_drinks, alcoholic_drinks, snacks, hotel_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             setPansionParameters(preparedStatement, pansion);
@@ -62,9 +61,9 @@ public class PansionDao {
         return null;
     }
 
-    public List<Pansion> getAll() {
-        List<Pansion> pansions = new ArrayList<>();
-        String query = "SELECT * FROM pansions";
+    public ArrayList<Pansion> getAll() {
+        ArrayList<Pansion> pansions = new ArrayList<>();
+        String query = "SELECT * FROM pansions ORDER BY id ASC";
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
@@ -87,13 +86,7 @@ public class PansionDao {
         preparedStatement.setBoolean(6, pansion.isSoftDrinks());
         preparedStatement.setBoolean(7, pansion.isAlcoholicDrinks());
         preparedStatement.setBoolean(8, pansion.isSnacks());
-        preparedStatement.setDate(9, new java.sql.Date(pansion.getCreatedAt().getTime()));
-        preparedStatement.setDate(10, new java.sql.Date(pansion.getUpdatedAt().getTime()));
-        preparedStatement.setDate(11, pansion.getDeletedAt() != null ? new java.sql.Date(pansion.getDeletedAt().getTime()) : null);
-        preparedStatement.setInt(12, pansion.getCreatedBy());
-        preparedStatement.setInt(13, pansion.getUpdatedBy());
-        preparedStatement.setInt(14, pansion.getDeletedBy() != null ? pansion.getDeletedBy() : 0);
-        preparedStatement.setInt(15, pansion.getHotelId());
+        preparedStatement.setInt(9, pansion.getHotelId());
     }
 
     private Pansion mapResultSetToPansion(ResultSet resultSet) throws SQLException {
@@ -107,12 +100,6 @@ public class PansionDao {
         pansion.setSoftDrinks(resultSet.getBoolean("soft_drinks"));
         pansion.setAlcoholicDrinks(resultSet.getBoolean("alcoholic_drinks"));
         pansion.setSnacks(resultSet.getBoolean("snacks"));
-        pansion.setCreatedAt(resultSet.getDate("created_at"));
-        pansion.setUpdatedAt(resultSet.getDate("updated_at"));
-        pansion.setDeletedAt(resultSet.getDate("deleted_at"));
-        pansion.setCreatedBy(resultSet.getInt("created_by"));
-        pansion.setUpdatedBy(resultSet.getInt("updated_by"));
-        pansion.setDeletedBy(resultSet.getInt("deleted_by"));
         pansion.setHotelId(resultSet.getInt("hotel_id"));
 
         return pansion;
@@ -125,12 +112,11 @@ public class PansionDao {
 
     public void update(Pansion pansion) {
         String query = "UPDATE pansions SET name = ?, breakfast = ?, lunch = ?, dinner = ?, midnight_snack = ?, " +
-                "soft_drinks = ?, alcoholic_drinks = ?, snacks = ?, created_at = ?, updated_at = ?, deleted_at = ?, " +
-                "created_by = ?, updated_by = ?, deleted_by = ?, hotel_id = ? WHERE id = ?";
+                "soft_drinks = ?, alcoholic_drinks = ?, snacks = ?, hotel_id = ? WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setPansionParameters(preparedStatement, pansion);
-            preparedStatement.setInt(16, pansion.getId());
+            preparedStatement.setInt(10, pansion.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -158,8 +144,8 @@ public class PansionDao {
         }
     }
 
-    public List<Pansion> getByHotelId(int hotelId) {
-        List<Pansion> pansions = new ArrayList<>();
+    public ArrayList<Pansion> getByHotelId(int hotelId) {
+        ArrayList<Pansion> pansions = new ArrayList<>();
         String query = "SELECT * FROM pansions WHERE hotel_id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {

@@ -54,13 +54,13 @@ public class DetailsPartialView {
         namePanel.add(nameField);
         panel.add(namePanel);
 
-        JPanel addressPanel = new JPanel();
-        addressPanel.setLayout(new GridLayout(1, 2));
-        JLabel addressLabel = new JLabel("Address: ");
-        addressLabel.setPreferredSize(new Dimension(100, 20));
-        JTextField addressField = new JTextField(hotel.getAddressFull());
-        addressField.setPreferredSize(new Dimension(200, 20));
-        addressField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+        JPanel addressFullPanel = new JPanel();
+        addressFullPanel.setLayout(new GridLayout(1, 2));
+        JLabel addressFullLabel = new JLabel("Address Full: ");
+addressFullLabel.setPreferredSize(new Dimension(100, 20));
+        JTextField addressFullField = new JTextField(hotel.getAddressFull());
+addressFullField.setPreferredSize(new Dimension(200, 20));
+        addressFullField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 update();
             }
@@ -76,12 +76,107 @@ public class DetailsPartialView {
             }
 
             private void update() {
-                hotel.setAddressFull(addressField.getText());
+                hotel.setAddressFull(addressFullField.getText());
             }
         });
-        addressPanel.add(addressLabel);
-        addressPanel.add(addressField);
-        panel.add(addressPanel);
+
+        addressFullPanel.add(addressFullLabel);
+        addressFullPanel.add(addressFullField);
+        panel.add(addressFullPanel);
+
+        JPanel addressDistrictPanel = new JPanel();
+        addressDistrictPanel.setLayout(new GridLayout(1, 2));
+        JLabel addressDistrictLabel = new JLabel("Address District: ");
+        addressDistrictLabel.setPreferredSize(new Dimension(100, 20));
+        JTextField addressDistrictField = new JTextField(hotel.getAddressDistrict());
+        addressDistrictField.setPreferredSize(new Dimension(200, 20));
+
+        addressDistrictField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                update();
+            }
+
+            private void update() {
+                hotel.setAddressDistrict(addressDistrictField.getText());
+            }
+        });
+
+        addressDistrictPanel.add(addressDistrictLabel);
+        addressDistrictPanel.add(addressDistrictField);
+        panel.add(addressDistrictPanel);
+
+        JPanel addressCityPanel = new JPanel();
+        addressCityPanel.setLayout(new GridLayout(1, 2));
+        JLabel addressCityLabel = new JLabel("Address City: ");
+        addressCityLabel.setPreferredSize(new Dimension(100, 20));
+        JTextField addressCityField = new JTextField(hotel.getAddressCity());
+        addressCityField.setPreferredSize(new Dimension(200, 20));
+
+        addressCityField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                update();
+            }
+
+            private void update() {
+                hotel.setAddressCity(addressCityField.getText());
+            }
+        });
+
+        addressCityPanel.add(addressCityLabel);
+        addressCityPanel.add(addressCityField);
+        panel.add(addressCityPanel);
+
+        JPanel addressCountryPanel = new JPanel();
+        addressCountryPanel.setLayout(new GridLayout(1, 2));
+        JLabel addressCountryLabel = new JLabel("Address Country: ");
+        addressCountryLabel.setPreferredSize(new Dimension(100, 20));
+        JTextField addressCountryField = new JTextField(hotel.getAddressCountry());
+        addressCountryField.setPreferredSize(new Dimension(200, 20));
+
+        addressCountryField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                update();
+            }
+
+            private void update() {
+                hotel.setAddressCountry(addressCountryField.getText());
+            }
+        });
+
+        addressCountryPanel.add(addressCountryLabel);
+        addressCountryPanel.add(addressCountryField);
+
+        panel.add(addressCountryPanel);
 
         JPanel phonePanel = new JPanel();
         phonePanel.setLayout(new GridLayout(1, 2));
@@ -177,19 +272,61 @@ public class DetailsPartialView {
         starRatingLabel.setPreferredSize(new Dimension(100, 20));
         ButtonGroup starRatingGroup = new ButtonGroup();
         starRatingPanel.add(starRatingLabel);
-        for (int i = 1; i <= 5; i++) {
-            JRadioButton starRating = new JRadioButton(Integer.toString(i));
-            starRating.addActionListener(e -> {
-                hotel.setStarRating(Integer.parseInt(starRating.getText()));
-                for (Component component : starRatingPanel.getComponents()) {
-                    if (component instanceof JRadioButton && !component.equals(starRating)) {
-                        ((JRadioButton) component).setSelected(false);
-                    }
-                }
-            });
-            starRatingGroup.add(starRating);
-            starRatingPanel.add(starRating);
+
+        JRadioButton starRating1 = new JRadioButton("1");
+        starRating1.addActionListener(e -> {
+            hotel.setStarRating(1);
+        });
+        starRatingGroup.add(starRating1);
+        starRatingPanel.add(starRating1);
+
+        JRadioButton starRating2 = new JRadioButton("2");
+        starRating2.addActionListener(e -> {
+            hotel.setStarRating(2);
+        });
+        starRatingGroup.add(starRating2);
+        starRatingPanel.add(starRating2);
+
+        JRadioButton starRating3 = new JRadioButton("3");
+        starRating3.addActionListener(e -> {
+            hotel.setStarRating(3);
+        });
+        starRatingGroup.add(starRating3);
+        starRatingPanel.add(starRating3);
+
+        JRadioButton starRating4 = new JRadioButton("4");
+        starRating4.addActionListener(e -> {
+            hotel.setStarRating(4);
+        });
+
+        starRatingGroup.add(starRating4);
+        starRatingPanel.add(starRating4);
+
+        JRadioButton starRating5 = new JRadioButton("5");
+        starRating5.addActionListener(e -> {
+            hotel.setStarRating(5);
+        });
+        starRatingGroup.add(starRating5);
+        starRatingPanel.add(starRating5);
+
+        switch (hotel.getStarRating()) {
+            case 1:
+                starRating1.setSelected(true);
+                break;
+            case 2:
+                starRating2.setSelected(true);
+                break;
+            case 3:
+                starRating3.setSelected(true);
+                break;
+            case 4:
+                starRating4.setSelected(true);
+                break;
+            case 5:
+                starRating5.setSelected(true);
+                break;
         }
+
 
         panel.add(createCheckBoxPanel("Has Car Park: ", hotel.isHasCarPark()));
         panel.add(createCheckBoxPanel("Has Internet: ", hotel.isHasInternet()));
@@ -204,8 +341,14 @@ public class DetailsPartialView {
         JPanel buttonPanel = new JPanel();
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e -> {
-            hotelController.update(hotel);
-            JOptionPane.showMessageDialog(null, "Hotel updated successfully!");
+            if (hotel.getId() == 0) {
+                hotelController.create(hotel);
+                JOptionPane.showMessageDialog(null, "Hotel created successfully!");
+
+            } else {
+                hotelController.update(hotel);
+                JOptionPane.showMessageDialog(null, "Hotel updated successfully!");
+            }
             RefreshParent.run();
 
         });

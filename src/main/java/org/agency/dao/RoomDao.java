@@ -63,9 +63,9 @@ public class RoomDao {
         return null;
     }
 
-    public List<Room> getAll() {
-        List<Room> rooms = new ArrayList<>();
-        String query = "SELECT * FROM rooms";
+    public ArrayList<Room> getAll() {
+        ArrayList<Room> rooms = new ArrayList<>();
+        String query = "SELECT * FROM rooms ORDER BY id ASC";
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
@@ -163,8 +163,8 @@ public class RoomDao {
         }
     }
 
-    public List<Room> getByHotelId(int hotelId) {
-        List<Room> rooms = new ArrayList<>();
+    public ArrayList<Room> getByHotelId(int hotelId) {
+        ArrayList<Room> rooms = new ArrayList<>();
         String query = "SELECT * FROM rooms WHERE hotel_id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -182,8 +182,8 @@ public class RoomDao {
         return rooms;
     }
 
-    public List<Room> getByHotelId(int hotelId, String query) {
-        List<Room> rooms = new ArrayList<>();
+    public ArrayList<Room> getByHotelId(int hotelId, String query) {
+        ArrayList<Room> rooms = new ArrayList<>();
         String sqlQuery = "SELECT * FROM rooms WHERE hotel_id = ? AND (room_number LIKE ? OR type LIKE ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
@@ -203,8 +203,8 @@ public class RoomDao {
         return rooms;
     }
 
-    public List<Room> paginate(int offset, int limit) {
-        List<Room> rooms = new ArrayList<>();
+    public ArrayList<Room> paginate(int offset, int limit) {
+        ArrayList<Room> rooms = new ArrayList<>();
         String query = "SELECT * FROM rooms LIMIT ?, ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -223,9 +223,49 @@ public class RoomDao {
         return rooms;
     }
 
+    public ArrayList<Room> getByHotelAndSeasonId(int hotelId, int seasonId) {
+        ArrayList<Room> rooms = new ArrayList<>();
+        String query = "SELECT * FROM rooms WHERE hotel_id = ? AND season_id = ?";
 
-    public List<Room> getByFilters(HashMap<String, Object> filters) {
-        List<Room> rooms = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, hotelId);
+            preparedStatement.setInt(2, seasonId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    rooms.add(mapResultSetToRoom(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return rooms;
+    }
+
+    public ArrayList<Room> getByHotelAndSeasonIdAndPansionId(int hotelId, int seasonId, int pansionId) {
+        ArrayList<Room> rooms = new ArrayList<>();
+        String query = "SELECT * FROM rooms WHERE hotel_id = ? AND season_id = ? AND pansion_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, hotelId);
+            preparedStatement.setInt(2, seasonId);
+            preparedStatement.setInt(3, pansionId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    rooms.add(mapResultSetToRoom(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return rooms;
+    }
+
+    public ArrayList<Room> getByFilters(HashMap<String, Object> filters) {
+        ArrayList<Room> rooms = new ArrayList<>();
         String fullQuery = "SELECT * FROM rooms WHERE hotel_id = ? AND (room_number LIKE ? OR type LIKE ?) " +
                 "AND double_bed_count = ? AND single_bed_count = ? AND adult_price = ? AND child_price = ? " +
                 "AND square_meters = ? AND has_television = ? AND has_balcony = ? AND has_air_conditioning = ? " +

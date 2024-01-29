@@ -3,6 +3,8 @@ package org.agency.controllers;
 import org.agency.dao.SeasonDao;
 import org.agency.entities.Season;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class SeasonController {
         return seasonDao.getById(seasonId);
     }
 
-    public List<Season> getAll() {
+    public ArrayList<Season> getAll() {
         return seasonDao.getAll();
     }
 
@@ -38,13 +40,13 @@ public class SeasonController {
     }
 
     //getAllByHotelId
-    public List<Season> getAllByHotelId(int hotelId) {
+    public ArrayList<Season> getAllByHotelId(int hotelId) {
         return seasonDao.getAllByHotelId(hotelId);
     }
 
 
-    public List<Season> getByFilters(HashMap<String, Object> filters) {
+    public ArrayList<Season> getByFilters(HashMap<String, Object> filters) {
         return seasonDao.getByFilters(filters);
     }
-}
 
+}

@@ -1,5 +1,7 @@
 package org.agency.entities;
 
+import org.agency.controllers.HotelController;
+
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -136,6 +138,18 @@ public class Season {
     }
 
     // toString method (optional)
+
+    public Hotel getHotel() {
+        HotelController hotelController = new HotelController();
+        return hotelController.getById(hotelId);
+    }
+
+    public void setHotel(Hotel hotel) {
+        this.hotelId = hotel.getId();
+    }
+
+
+
 
     @Override
     public String toString() {

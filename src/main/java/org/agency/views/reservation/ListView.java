@@ -17,6 +17,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,7 +44,6 @@ public class ListView {
 
 
     public ListView() {
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
         frame.add(render());
@@ -173,32 +173,25 @@ public class ListView {
 
         headerSearchPanel.add(statusField);
 
-        JLabel checkInLabel = new JLabel("Check In");
-        checkInLabel.setPreferredSize(new Dimension(100, 30));
-        checkInLabel.setMaximumSize(new Dimension(100, 30));
-        checkInLabel.setMinimumSize(new Dimension(100, 30));
+        JLabel checkInLabel = new JLabel("Dates");
+        checkInLabel.setPreferredSize(new Dimension(50, 30));
+        checkInLabel.setMaximumSize(new Dimension(50, 30));
+        checkInLabel.setMinimumSize(new Dimension(50, 30));
         checkInLabel.setToolTipText("Check In");
         headerSearchPanel.add(checkInLabel);
 
         DatePicker checkInField = new DatePicker();
-        checkInField.setPreferredSize(new Dimension(100, 30));
-        checkInField.setMaximumSize(new Dimension(100, 30));
-        checkInField.setMinimumSize(new Dimension(100, 30));
+        checkInField.setPreferredSize(new Dimension(160, 30));
+        checkInField.setMaximumSize(new Dimension(160, 30));
+        checkInField.setMinimumSize(new Dimension(160, 30));
         checkInField.setToolTipText("Check In");
         headerSearchPanel.add(checkInField);
 
-        JLabel checkOutLabel = new JLabel("Check Out");
-        checkOutLabel.setPreferredSize(new Dimension(100, 30));
-        checkOutLabel.setMaximumSize(new Dimension(100, 30));
-        checkOutLabel.setMinimumSize(new Dimension(100, 30));
-        checkOutLabel.setToolTipText("Check Out");
-
-        headerSearchPanel.add(checkOutLabel);
 
         DatePicker checkOutField = new DatePicker();
-        checkOutField.setPreferredSize(new Dimension(100, 30));
-        checkOutField.setMaximumSize(new Dimension(100, 30));
-        checkOutField.setMinimumSize(new Dimension(100, 30));
+        checkOutField.setPreferredSize(new Dimension(160, 30));
+        checkOutField.setMaximumSize(new Dimension(160, 30));
+        checkOutField.setMinimumSize(new Dimension(160, 30));
 
         headerSearchPanel.add(checkOutField);
 
@@ -239,6 +232,7 @@ public class ListView {
             }
 
             if (checkInField.getDate() != null) {
+                // YYYY-MM-DD
                 filters.put("check_in", checkInField.getDate());
             }
 
@@ -372,7 +366,6 @@ public class ListView {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Reservations");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(800, 600);
             frame.setLocationRelativeTo(null);
             frame.add(new ListView().render());

@@ -78,8 +78,9 @@ The project consists of 3 main parts: **Hotel Management**, **User Management** 
 1. Clone the repository: `git clone https://github.com/kuraykaraaslan/TravelAgency.git`
 2. Navigate to the project directory: `cd TravelAgency`
 3. Open the project in your IDE
-4. Create a database named `travelagency` in PostgreSQL
-5. Run the `travelagency.sql` file in the `src/main/resources` folder to create the tables
+4. Create a database named `agency` in PostgreSQL or change the database name in the `src/main/java/agency/core/DataBase.java` file
+5. Run the `runWithTestData.sql` file in the `src/main/resources` folder to create the tables or run the `runWithoutTestData.sql` file to create the tables without test data
+
 6. Run the project
 
 ### Permission Table
@@ -121,6 +122,18 @@ The project uses Swing for the graphical user interface, providing a user-friend
 ## Screenshots
 
 Include screenshots here to visually showcase the application's interface and features.
+
+![All Reservations](/static/all_reservations.png)
+![Reservation Details](/static/reservation_details.png)
+![All Hotels](/static/all_hotels.png)
+![Hotel Details](/static/hotel_details.png)
+![Hotel Assets](/static/hotel_assets.png)
+![Hotel Rooms](/static/hotel_rooms.png)
+![Hotel Seasons](/static/hotel_seasons.png)
+![Hotel Pensions](/static/hotel_pensions.png)
+![Hotel Reservations](/static/hotel_reservations.png)
+
+
 
 
 ## Contributing

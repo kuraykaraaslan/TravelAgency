@@ -1,5 +1,10 @@
 package org.agency.entities;
 
+import org.agency.controllers.HotelController;
+import org.agency.controllers.PansionController;
+import org.agency.controllers.RoomController;
+import org.agency.controllers.SeasonController;
+
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -25,6 +30,10 @@ public class Reservation {
     private Integer deletedBy; // Use Integer for nullable columns
     private int hotelId;
     private int roomId;
+
+    private int pansionId;
+
+    private int seasonId;
 
     // Constructors
 
@@ -226,6 +235,61 @@ public class Reservation {
 
     // toString method (optional)
 
+    //setPansionId
+    public void setPansionId(int pansionId) {
+        this.pansionId = pansionId;
+    }
+
+    public int getPansionId() {
+        return pansionId;
+    }
+
+    public void setSeasonId(int seasonId) {
+        this.seasonId = seasonId;
+    }
+
+    public int getSeasonId() {
+        return seasonId;
+    }
+
+    public Season getSeason() {
+        SeasonController seasonController = new SeasonController();
+        return seasonController.getById(seasonId);
+    }
+
+    public Pansion getPansion() {
+        PansionController pansionController = new PansionController();
+        return pansionController.getById(pansionId);
+    }
+
+    public Room getRoom() {
+        RoomController roomController = new RoomController();
+        return roomController.getById(roomId);
+    }
+
+    public Hotel getHotel() {
+        HotelController hotelController = new HotelController();
+        return hotelController.getById(hotelId);
+    }
+
+    public void setHotel(Hotel hotel) {
+        this.hotelId = hotel.getId();
+    }
+
+    public void setRoom(Room room) {
+        this.roomId = room.getId();
+    }
+
+    public void setSeason(Season season) {
+        this.seasonId = season.getId();
+    }
+
+    public void setPansion(Pansion pansion) {
+        this.pansionId = pansion.getId();
+    }
+
+    
+
     @Override
     public String toString() {
         return "Reservation{" +
@@ -247,6 +311,12 @@ public class Reservation {
                 ", deletedBy=" + deletedBy +
                 ", hotelId=" + hotelId +
                 ", roomId=" + roomId +
+                ", pansionId=" + pansionId +
+                ", seasonId=" + seasonId +
+                ", status='" + status + '\'' +
+                ", season=" + getSeason() +
+                ", pansion=" + getPansion() +
+                ", room=" + getRoom() +
                 '}';
     }
 }

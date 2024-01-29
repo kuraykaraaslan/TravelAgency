@@ -18,7 +18,6 @@ import java.util.List;
 
 public class DetailsView {
 
-    public Integer state = -1;
     public JFrame frame = new JFrame("Season");
     public Season season;
 
@@ -46,7 +45,7 @@ public class DetailsView {
     }
 
     private void configureFrame(JFrame frame) {
-        this.frame.setSize(400, 200);
+        this.frame.setSize(400, 230);
         frame.setIconImage(new ImageIcon("src/main/resources/icon.png").getImage());
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
@@ -55,6 +54,7 @@ public class DetailsView {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         // Panels
+        mainPanel.add(namePanel());
         mainPanel.add(startDatePanel());
         mainPanel.add(endDatePanel());
         mainPanel.add(hotelIdPanel());
@@ -78,13 +78,24 @@ public class DetailsView {
 
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                state = 1;
+                if (season.getId() != 0) {
+                    seasonController.update(season);
+                } else {
+                    seasonController.create(season);
+                }
+                frame.dispose();
             }
         });
 
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                state = 2;
+                //CONFIRMATION
+                JOptionPane confirmDialog = new JOptionPane();
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this season?", "Warning", JOptionPane.YES_NO_OPTION);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    seasonController.delete(season);
+                    frame.dispose();
+                }
             }
         });
 
@@ -108,6 +119,7 @@ public class DetailsView {
             hotelIdField.addItem(hotel);
         }
 
+        System.out.println(season);
         hotelIdField.setRenderer(new BasicComboBoxRenderer() {
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
@@ -125,9 +137,10 @@ public class DetailsView {
             }
         });
 
+        hotelIdField.setSelectedItem((Hotel) season.getHotel());
+
         hotelIdField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                // Save button logic
                 season.setHotelId(((Hotel) hotelIdField.getSelectedItem()).getId());
             }
         });
@@ -143,6 +156,37 @@ public class DetailsView {
         return hotelIdPanel;
     }
 
+    //name panel
+    private JPanel namePanel() {
+        JPanel namePanel = new JPanel();
+        namePanel.setLayout(new FlowLayout());
+        JLabel nameLabel = new JLabel("Name");
+        nameLabel.setPreferredSize(labelDimension);
+
+        JTextField nameField = new JTextField(season.getName());
+        nameField.setPreferredSize(fieldDimension);
+
+        nameField.setText(season.getName());
+
+        nameField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void changedUpdate(javax.swing.event.DocumentEvent evt) {
+                season.setName(nameField.getText());
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent evt) {
+                season.setName(nameField.getText());
+            }
+
+            public void insertUpdate(javax.swing.event.DocumentEvent evt) {
+                season.setName(nameField.getText());
+            }
+        });
+
+        namePanel.add(nameLabel);
+        namePanel.add(nameField);
+
+        return namePanel;
+    }
 
 
 
@@ -153,6 +197,7 @@ public class DetailsView {
         startDateLabel.setPreferredSize(labelDimension);
 
         DatePicker startDateField = new DatePicker();
+        startDateField.setDate(season.getStartDateLocalDate());
         startDateField.setPreferredSize(fieldDimension);
 
         startDateField.addDateChangeListener((dce) -> {
@@ -174,6 +219,7 @@ public class DetailsView {
         endDateLabel.setPreferredSize(labelDimension);
 
         DatePicker endDateField = new DatePicker();
+        endDateField.setDate(season.getEndDateLocalDate());
         endDateField.setPreferredSize(fieldDimension);
 
         endDateField.addDateChangeListener((dce) -> {

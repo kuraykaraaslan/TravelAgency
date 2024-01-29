@@ -65,9 +65,9 @@ public class SeasonDao {
         return null;
     }
 
-    public List<Season> getAll() {
-        List<Season> seasons = new ArrayList<>();
-        String query = "SELECT * FROM seasons";
+    public ArrayList<Season> getAll() {
+        ArrayList<Season> seasons = new ArrayList<>();
+        String query = "SELECT * FROM seasons ORDER BY id ASC";
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
@@ -148,8 +148,8 @@ public class SeasonDao {
     }
 
     //getAllByHotelId
-    public List<Season> getAllByHotelId(int hotelId) {
-        List<Season> seasons = new ArrayList<>();
+    public ArrayList<Season> getAllByHotelId(int hotelId) {
+        ArrayList<Season> seasons = new ArrayList<>();
         String query = "SELECT * FROM seasons WHERE hotel_id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -167,8 +167,8 @@ public class SeasonDao {
         return seasons;
     }
 
-    public List<Season> getByFilters(HashMap<String, Object> filters) {
-        List<Season> seasons = new ArrayList<>();
+    public ArrayList<Season> getByFilters(HashMap<String, Object> filters) {
+        ArrayList<Season> seasons = new ArrayList<>();
         String fullQuery = "SELECT * FROM seasons WHERE hotel_id = ? AND start_date >= ? AND end_date <= ?";
 
         String query = "SELECT * FROM seasons WHERE ";

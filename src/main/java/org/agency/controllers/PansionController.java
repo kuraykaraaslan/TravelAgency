@@ -1,5 +1,6 @@
 package org.agency.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.agency.dao.PansionDao;
 import org.agency.entities.Pansion;
@@ -21,7 +22,7 @@ public class PansionController {
         return pansionDao.getById(pansionId);
     }
 
-    public List<Pansion> getAll() {
+    public ArrayList<Pansion> getAll() {
         return pansionDao.getAll();
     }
 
@@ -35,8 +36,9 @@ public class PansionController {
         System.out.println("Pansion deleted successfully.");
     }
 
-    public List<Pansion> getByHotelId(int hotelId) {
+    public ArrayList<Pansion> getByHotelId(int hotelId) {
         return pansionDao.getByHotelId(hotelId);
     }
+
 
 }

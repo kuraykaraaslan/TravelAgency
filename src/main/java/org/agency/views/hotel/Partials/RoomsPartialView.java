@@ -2,6 +2,7 @@ package org.agency.views.hotel.Partials;
 
 import org.agency.controllers.HotelController;
 import org.agency.controllers.RoomController;
+import org.agency.controllers.SeasonController;
 import org.agency.entities.Hotel;
 import org.agency.entities.Room;
 
@@ -277,6 +278,11 @@ public class RoomsPartialView {
         createButton.addActionListener(e -> {
             Room room = new Room();
             room.setHotelId(hotel.getId());
+            SeasonController seasonController = new SeasonController();
+            if (seasonController.getAllByHotelId(hotel.getId()).size() == 0) {
+                JOptionPane.showMessageDialog(null, "You must create a season first!");
+                return;
+            }
             org.agency.views.room.DetailsView detailsView = new org.agency.views.room.DetailsView(room);
         });
 

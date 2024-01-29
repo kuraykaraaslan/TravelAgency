@@ -61,11 +61,12 @@ public class DetailsView extends Component {
         createReservationsPanel();
         createPansionsPanel();
         tabbedPane.addTab("Details", detailsPanel );
-        tabbedPane.addTab("Rooms", roomsPanel);
-        tabbedPane.addTab("Seasons", seasonsPanel);
-        tabbedPane.addTab("Pansions", pansionsPanel);
-        tabbedPane.addTab("Reservations", reservationsPanel);
-
+        if (hotel.getId() != 0) {
+            tabbedPane.addTab("Rooms", roomsPanel);
+            tabbedPane.addTab("Seasons", seasonsPanel);
+            tabbedPane.addTab("Pansions", pansionsPanel);
+            tabbedPane.addTab("Reservations", reservationsPanel);
+        }
         return tabbedPane;
     }
 

@@ -102,9 +102,9 @@ public class HotelDao {
         return null;
     }
 
-    public List<Hotel> getAll() {
-        List<Hotel> hotels = new ArrayList<>();
-        String query = "SELECT * FROM hotels";
+    public ArrayList<Hotel> getAll() {
+        ArrayList<Hotel> hotels = new ArrayList<>();
+        String query = "SELECT * FROM hotels ORDER BY id ASC";
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
@@ -163,7 +163,7 @@ public class HotelDao {
     }
 
     public PaginatedResult<Hotel> paginate(int offset, int limit, String keyword) {
-        List<Hotel> hotels = new ArrayList<>();
+        ArrayList<Hotel> hotels = new ArrayList<>();
 
         // Handle null keyword
         if (keyword == null) {

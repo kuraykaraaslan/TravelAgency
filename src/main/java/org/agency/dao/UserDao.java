@@ -171,8 +171,8 @@ public class UserDao {
         }
     }
 
-    public List<User> getDeleted() {
-        List<User> users = new ArrayList<>();
+    public ArrayList<User> getDeleted() {
+        ArrayList<User> users = new ArrayList<>();
         String query = "SELECT * FROM users WHERE deleted_at IS NOT NULL";
 
         try (Statement statement = connection.createStatement();
@@ -222,7 +222,7 @@ public class UserDao {
 
     // Additions
     public PaginatedResult<User> paginate(int offset, int limit, String keyword) {
-        List<User> users = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
 
         // Handle null keyword
         if (keyword == null) {

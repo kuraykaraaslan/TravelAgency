@@ -58,7 +58,7 @@ public class Main {
         try {
             session = new Session();
 
-            LoginView loginView = new LoginView("admin", "admin");
+            LoginView loginView = new LoginView();
 
             while (!session.isLoggedIn()) {
                 try {
