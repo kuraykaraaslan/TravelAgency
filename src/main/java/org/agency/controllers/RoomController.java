@@ -30,6 +30,11 @@ public class RoomController {
         System.out.println("Room updated successfully.");
     }
 
+    public void create(Room room) {
+        //System.out.println("ROOM CONTROLLER: " + room);
+        roomDao.insert(room);
+    }
+
     public void delete(Room room) {
         roomDao.delete(room);
         System.out.println("Room deleted successfully.");

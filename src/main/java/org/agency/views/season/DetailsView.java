@@ -56,7 +56,7 @@ public class DetailsView {
         mainPanel.add(namePanel());
         mainPanel.add(startDatePanel());
         mainPanel.add(endDatePanel());
-        mainPanel.add(hotelIdPanel());
+        //mainPanel.add(hotelIdPanel());
 
         // Buttons Panel
         JPanel buttonsPanel = new JPanel();
@@ -77,6 +77,32 @@ public class DetailsView {
 
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+                // check inputs
+                if (season.getName().equals("")) {
+                    JOptionPane.showMessageDialog(null, "Name is required.");
+                    return;
+                }
+
+                if (season.getStartDateLocalDate() == null) {
+                    JOptionPane.showMessageDialog(null, "Start Date is required.");
+                    return;
+                }
+
+                if (season.getEndDateLocalDate() == null) {
+                    JOptionPane.showMessageDialog(null, "End Date is required.");
+                    return;
+                }
+
+                if (season.getHotelId() == 0) {
+                    JOptionPane.showMessageDialog(null, "Hotel is required.");
+                    return;
+                }
+
+                if (season.getStartDateLocalDate().isAfter(season.getEndDateLocalDate())) {
+                    JOptionPane.showMessageDialog(null, "Start Date must be before End Date.");
+                    return;
+                }
                 if (season.getId() != 0) {
                     seasonController.update(season);
                 } else {

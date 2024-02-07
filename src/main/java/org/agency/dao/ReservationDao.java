@@ -21,6 +21,8 @@ public class ReservationDao {
     }
 
     public void insert(Reservation reservation) {
+        System.out.println("Inserting reservation...");
+        System.out.println(reservation);
         String query = "INSERT INTO reservations (guest_citizen_id, guest_full_name, guest_email, guest_phone, " +
                 "check_in, check_out, adult_count, child_count, price, created_at, updated_at, deleted_at, " +
                 "created_by, updated_by, deleted_by, hotel_id, room_id, pansion_id, status, season_id) " +
@@ -340,6 +342,8 @@ public class ReservationDao {
 
         return reservations;
     }
+
+
 
     public PaginatedResult<Reservation> paginate(int offset, int limit) {
         return paginate(offset, limit, null);

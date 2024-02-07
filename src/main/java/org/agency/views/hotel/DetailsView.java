@@ -27,6 +27,7 @@ public class DetailsView extends Component {
 
     private JPanel reservationsPanel;
 
+
     private void configureFrame(JFrame frame) {
         frame.setSize(getHalfScreenSize());
         frame.setBackground(Color.white);

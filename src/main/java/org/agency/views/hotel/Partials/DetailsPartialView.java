@@ -339,6 +339,53 @@ public class DetailsPartialView {
         JPanel buttonPanel = new JPanel();
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e -> {
+            //check inputs
+            if (hotel.getName().equals("")) {
+                JOptionPane.showMessageDialog(null, "Name is required!");
+                return;
+            }
+            if (hotel.getAddressFull().equals("")) {
+                JOptionPane.showMessageDialog(null, "Address is required!");
+                return;
+            }
+
+            if (hotel.getAddressCity().equals("")) {
+                JOptionPane.showMessageDialog(null, "City is required!");
+                return;
+            }
+            if (hotel.getAddressCountry().equals("")) {
+                JOptionPane.showMessageDialog(null, "Country is required!");
+                return;
+            }
+
+            if (hotel.getAddressDistrict().equals("")) {
+                JOptionPane.showMessageDialog(null, "District is required!");
+                return;
+            }
+
+
+            if (hotel.getEmail().equals("")) {
+                JOptionPane.showMessageDialog(null, "Email is required!");
+                return;
+            }
+
+            if (hotel.getEmail().equals("")) {
+                JOptionPane.showMessageDialog(null, "Email is required!");
+                return;
+            }
+
+            if (hotel.getPhone().equals("")) {
+                JOptionPane.showMessageDialog(null, "Phone is required!");
+                return;
+            }
+
+            if (hotel.getStarRating() == 0) {
+                JOptionPane.showMessageDialog(null, "Star Rating is required!");
+                return;
+            }
+
+
+
             if (hotel.getId() == 0) {
                 hotelController.create(hotel);
                 JOptionPane.showMessageDialog(null, "Hotel created successfully!");

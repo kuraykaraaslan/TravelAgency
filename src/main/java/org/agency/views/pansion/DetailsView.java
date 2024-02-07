@@ -237,9 +237,37 @@ public class DetailsView {
         buttonsPanel.add(saveButton);
         buttonsPanel.add(exitButton);
 
-        saveButton.addActionListener(this::handleSaveButton);
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
 
-        exitButton.addActionListener(this::handleExitButton);
+            //check input
+
+            public void actionPerformed(ActionEvent evt) {
+
+                if (pansion.getName().equals("")) {
+                    JOptionPane.showMessageDialog(null, "Name is required");
+                    return;
+                }
+
+                if (pansion.getHotelId() == 0) {
+                    JOptionPane.showMessageDialog(null, "Hotel is required");
+                    return;
+                }
+
+                if (pansion.getId() == 0) {
+                    pansionController.create(pansion);
+                } else {
+                    pansionController.update(pansion);
+                }
+                frame.dispose();
+            }
+        });
+
+        exitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                frame.dispose();
+            }
+        });
+
 
         mainPanel.add(buttonsPanel);
 
@@ -344,19 +372,6 @@ public class DetailsView {
         hotelIdPanel.add(hotelIdField);
 
         return hotelIdPanel;
-    }
-
-    private void handleSaveButton(ActionEvent evt) {
-        if (pansion.getId() == 0) {
-            pansionController.create(pansion);
-        } else {
-            pansionController.update(pansion);
-        }
-        frame.dispose();
-    }
-
-    private void handleExitButton(ActionEvent evt) {
-        frame.dispose();
     }
 
     public static void main(String[] args) {

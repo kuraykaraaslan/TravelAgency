@@ -22,6 +22,7 @@ public class ReservationController {
     }
 
     public void create(Reservation reservation) {
+        System.out.println("ReservationController.create: " + reservation);
         reservationDao.insert(reservation);
         System.out.println("Reservation created successfully.");
     }
@@ -72,6 +73,7 @@ public class ReservationController {
         int limit = offset + pageSize;
         return reservationDao.paginate(offset, limit, query);
     }
+
 
 
 }

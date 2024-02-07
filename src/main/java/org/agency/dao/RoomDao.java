@@ -21,8 +21,8 @@ public class RoomDao {
     public void insert(Room room) {
         String query = "INSERT INTO rooms (room_number, type, double_bed_count, single_bed_count, adult_price, " +
                 "child_price, square_meters, has_television, has_balcony, has_air_conditioning, has_minibar, " +
-                "has_valuables_safe, has_gaming_console, has_projector, hotel_id, season_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "has_valuables_safe, has_gaming_console, has_projector, hotel_id, season_id, pansion_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query,
                 Statement.RETURN_GENERATED_KEYS)) {
@@ -97,6 +97,7 @@ public class RoomDao {
         preparedStatement.setBoolean(14, room.isHasProjector());
         preparedStatement.setInt(15, room.getHotelId());
         preparedStatement.setInt(16, room.getSeasonId());
+        preparedStatement.setInt(17, room.getPansionId());
     }
 
     private Room mapResultSetToRoom(ResultSet resultSet) throws SQLException {
@@ -118,11 +119,13 @@ public class RoomDao {
         room.setHasProjector(resultSet.getBoolean("has_projector"));
         room.setHotelId(resultSet.getInt("hotel_id"));
         room.setSeasonId(resultSet.getInt("season_id"));
+        room.setPansionId(resultSet.getInt("pansion_id"));
         return room;
     }
 
     private void handleSQLException(SQLException e) {
         e.printStackTrace();
+        System.err.println("Error message: " + e.getMessage());
         // Handle exceptions as needed
     }
 
@@ -130,11 +133,11 @@ public class RoomDao {
         String query = "UPDATE rooms SET room_number = ?, type = ?, double_bed_count = ?, single_bed_count = ?, " +
                 "adult_price = ?, child_price = ?, square_meters = ?, has_television = ?, has_balcony = ?, " +
                 "has_air_conditioning = ?, has_minibar = ?, has_valuables_safe = ?, has_gaming_console = ?, " +
-                "has_projector = ?, hotel_id = ?, season_id = ? WHERE id = ?";
+                "has_projector = ?, hotel_id = ?, season_id = ?, pansion_id = ? WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setParameters(preparedStatement, room);
-            preparedStatement.setInt(23, room.getId());
+            preparedStatement.setInt(18, room.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -189,26 +192,6 @@ public class RoomDao {
             preparedStatement.setInt(1, hotelId);
             preparedStatement.setString(2, "%" + query + "%");
             preparedStatement.setString(3, "%" + query + "%");
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    rooms.add(mapResultSetToRoom(resultSet));
-                }
-            }
-        } catch (SQLException e) {
-            handleSQLException(e);
-        }
-
-        return rooms;
-    }
-
-    public ArrayList<Room> paginate(int offset, int limit) {
-        ArrayList<Room> rooms = new ArrayList<>();
-        String query = "SELECT * FROM rooms LIMIT ?, ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, offset);
-            preparedStatement.setInt(2, limit);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {

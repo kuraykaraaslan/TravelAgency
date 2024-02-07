@@ -42,6 +42,10 @@ public class DetailsView {
     public ArrayList<Pansion> pansions = new ArrayList<>();
     public ArrayList<Room> rooms = new ArrayList<>();
 
+    public DatePicker checkInPicker;
+
+    public DatePicker checkOutPicker;
+
     public DetailsView(Reservation reservation) {
         this.reservation = reservation;
 
@@ -211,7 +215,7 @@ public class DetailsView {
         JLabel checkInLabel = new JLabel("Check In:");
         checkInLabel.setPreferredSize(new Dimension(100, 20));
 
-        DatePicker checkInPicker = new DatePicker();
+        checkInPicker = new DatePicker();
         checkInPicker.setDate(reservation.getCheckInLocalDate());
         checkInPicker.addDateChangeListener(event -> {
             reservation.setCheckIn(java.sql.Date.valueOf(checkInPicker.getDate()));
@@ -227,7 +231,7 @@ public class DetailsView {
         JLabel checkOutLabel = new JLabel("Check Out:");
         checkOutLabel.setPreferredSize(new Dimension(100, 20));
 
-        DatePicker checkOutPicker = new DatePicker();
+        checkOutPicker = new DatePicker();
         checkOutPicker.setDate(reservation.getCheckOutLocalDate());
         checkOutPicker.addDateChangeListener(event -> {
             reservation.setCheckOut(java.sql.Date.valueOf(checkOutPicker.getDate()));
@@ -292,10 +296,19 @@ public class DetailsView {
 
         JPanel hotelPanel = new JPanel();
         hotelPanel.setLayout(new GridLayout(1, 2));
-        JLabel hotelLabel = new JLabel("Hotel:");
+        JLabel hotelLabel = new JLabel("Hotel: (click for details)");
         hotelLabel.setPreferredSize(new Dimension(100, 20));
 
-        JComboBox<Hotel> hotelComboBox = new JComboBox<>();
+        hotelLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (reservation.getHotelId() != 0) {
+                    new org.agency.views.hotel.DetailsView(reservation.getHotelId());
+                }
+            }
+        });
+
+
+        hotelComboBox = new JComboBox<>();
         ComboBoxModel<Hotel> hotelComboBoxModel = new DefaultComboBoxModel<>(hotels.toArray(new Hotel[0]));
         hotelComboBox.setModel(hotelComboBoxModel);
         hotelComboBox.setRenderer(new DefaultListCellRenderer() {
@@ -321,10 +334,19 @@ public class DetailsView {
 
         JPanel seasonPanel = new JPanel();
         seasonPanel.setLayout(new GridLayout(1, 2));
-        JLabel seasonLabel = new JLabel("Season:");
+        JLabel seasonLabel = new JLabel("Season: (click for details)");
         seasonLabel.setPreferredSize(new Dimension(100, 20));
 
-        JComboBox<Season> seasonComboBox = new JComboBox<>();
+        seasonLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (reservation.getSeasonId() != 0) {
+                    SeasonController seasonController = new SeasonController();
+                    new org.agency.views.season.DetailsView(seasonController.getById(reservation.getSeasonId()));
+                }
+            }
+        });
+
+        seasonComboBox = new JComboBox<>();
         ComboBoxModel<Season> seasonComboBoxModel = new DefaultComboBoxModel<>(seasons.toArray(new Season[0]));
         seasonComboBox.setModel(seasonComboBoxModel);
         seasonComboBox.setRenderer(new DefaultListCellRenderer() {
@@ -349,11 +371,22 @@ public class DetailsView {
         // room id
 
         JPanel roomPanel = new JPanel();
+        JPanel roomRightPanel = new JPanel();
         roomPanel.setLayout(new GridLayout(1, 2));
-        JLabel roomLabel = new JLabel("Room:");
+        roomRightPanel.setLayout(new GridLayout(1, 2));
+        JLabel roomLabel = new JLabel("Room: (click for details)");
         roomLabel.setPreferredSize(new Dimension(100, 20));
 
-        JComboBox<Room> roomComboBox = new JComboBox<>();
+        roomLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (reservation.getRoomId() != 0) {
+                    RoomController roomController = new RoomController();
+                    new org.agency.views.room.DetailsView(roomController.getById(reservation.getRoomId()));
+                }
+            }
+        });
+
+        roomComboBox = new JComboBox<>();
         ComboBoxModel<Room> roomComboBoxModel = new DefaultComboBoxModel<>(rooms.toArray(new Room[0]));
         roomComboBox.setModel(roomComboBoxModel);
         roomComboBox.setRenderer(new DefaultListCellRenderer() {
@@ -366,14 +399,26 @@ public class DetailsView {
                 if (value instanceof Room) {
                     Room room = (Room) value;
                     setText(room.getRoomNumber());
+                    if (checkRoomAvailabilitySelectedRoom(room)) {
+                        setBackground(Color.GREEN);
+                    } else {
+                        setBackground(Color.RED);
+                    }
                 }
-
                 return this;
             }
         });
 
+        JButton checkRoomAvailabilityButton = new JButton("Check");
+
+        checkRoomAvailabilityButton.addActionListener(e -> {
+            checkRoomAvailability();
+        });
+
         roomPanel.add(roomLabel);
-        roomPanel.add(roomComboBox);
+        roomRightPanel.add(roomComboBox);
+        roomRightPanel.add(checkRoomAvailabilityButton);
+        roomPanel.add(roomRightPanel);
         panel.add(roomPanel);
 
         // pansion id
@@ -540,7 +585,8 @@ public class DetailsView {
                 return;
             }
             reservation.setRoomId(room.getId());
-            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount());
+            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount(),
+                    reservation.getCheckInLocalDate(), reservation.getCheckOutLocalDate());
             reservation.setPrice(price);
             priceField.setText(String.valueOf(price));
         });
@@ -551,7 +597,7 @@ public class DetailsView {
                 return;
             }
             reservation.setAdultCount((Integer) adultCountComboBox.getSelectedItem());
-            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount());
+            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount(), reservation.getCheckInLocalDate(), reservation.getCheckOutLocalDate());
             reservation.setPrice(price);
             priceField.setText(String.valueOf(price));
         });
@@ -562,7 +608,27 @@ public class DetailsView {
                 return;
             }
             reservation.setChildCount((Integer) childCountComboBox.getSelectedItem());
-            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount());
+            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount(), reservation.getCheckInLocalDate(), reservation.getCheckOutLocalDate());
+            reservation.setPrice(price);
+            priceField.setText(String.valueOf(price));
+        });
+
+        checkInPicker.addDateChangeListener(event -> {
+            Room room = (Room) roomComboBox.getSelectedItem();
+            if (room == null) {
+                return;
+            }
+            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount(), reservation.getCheckInLocalDate(), reservation.getCheckOutLocalDate());
+            reservation.setPrice(price);
+            priceField.setText(String.valueOf(price));
+        });
+
+        checkOutPicker.addDateChangeListener(event -> {
+            Room room = (Room) roomComboBox.getSelectedItem();
+            if (room == null) {
+                return;
+            }
+            int price = calculatePrice(reservation, room, reservation.getAdultCount(), reservation.getChildCount(), reservation.getCheckInLocalDate(), reservation.getCheckOutLocalDate());
             reservation.setPrice(price);
             priceField.setText(String.valueOf(price));
         });
@@ -574,6 +640,62 @@ public class DetailsView {
         JButton deleteButton = new JButton("Delete");
 
         saveButton.addActionListener(e -> {
+
+            //check for empty fields
+            if (reservation.getGuestFullName().equals("")) {
+                JOptionPane.showMessageDialog(null, "Guest Full Name cannot be empty.");
+                return;
+            }
+            if (reservation.getGuestCitizenId().equals("")) {
+                JOptionPane.showMessageDialog(null, "Guest Citizen ID cannot be empty.");
+                return;
+            }
+
+            if (reservation.getGuestEmail().equals("")) {
+                JOptionPane.showMessageDialog(null, "Guest Email cannot be empty.");
+                return;
+            }
+            if (reservation.getGuestPhone().equals(""))
+            {
+                JOptionPane.showMessageDialog(null, "Guest Phone cannot be empty.");
+                return;
+            }
+            if (reservation.getCheckIn() == null) {
+                JOptionPane.showMessageDialog(null, "Check In date cannot be empty.");
+                return;
+            }
+            if (reservation.getCheckOut() == null) {
+                JOptionPane.showMessageDialog(null, "Check Out date cannot be empty.");
+                return;
+            }
+            if (reservation.getAdultCount() == 0) {
+                JOptionPane.showMessageDialog(null, "Adult Count cannot be 0.");
+                return;
+            }
+            if (reservation.getHotelId() == 0) {
+                JOptionPane.showMessageDialog(null, "Please select a hotel.");
+                return;
+            }
+
+            if (reservation.getSeasonId() == 0) {
+                JOptionPane.showMessageDialog(null, "Please select a season.");
+                return;
+            }
+
+            if (reservation.getPansionId() == 0) {
+                JOptionPane.showMessageDialog(null, "Please select a pansion.");
+                return;
+            }
+
+            if (reservation.getRoomId() == 0) {
+                JOptionPane.showMessageDialog(null, "Please select a room.");
+                return;
+            }
+
+
+
+
+
             if (reservation.getId() == 0) {
                 // Create
                 reservation.setCreatedAt(new Date());
@@ -643,7 +765,8 @@ public class DetailsView {
 
     }
 
-    public int calculatePrice(Reservation reservation, Room room, int adultCount, int childCount) {
+    public int calculatePrice(Reservation reservation, Room room, int adultCount, int childCount, LocalDate checkIn,
+            LocalDate checkOut) {
         int price = 0;
         if (reservation.getRoomId() == 0) {
             return price;
@@ -655,11 +778,183 @@ public class DetailsView {
             return price;
         }
 
-        price = (int) (room.getAdultPrice() * adultCount + room.getChildPrice() * childCount);
+        if (checkIn == null || checkOut == null) {
+            return price;
+        }
+
+        if (checkIn.isAfter(checkOut)) {
+            // alert
+            JOptionPane.showMessageDialog(null, "Check in date cannot be after check out date.");
+            return 0;
+        }
+
+
+        int days = (int) (checkOut.toEpochDay() - checkIn.toEpochDay());
+
+        price = (int) (room.getAdultPrice() * adultCount + room.getChildPrice() * childCount) * days;
 
         return price;
 
     }
+
+    private void checkRoomAvailability() {
+        // check date fits in the season
+        LocalDate checkIn = reservation.getCheckInLocalDate();
+        LocalDate checkOut = reservation.getCheckOutLocalDate();
+
+        if (checkIn == null || checkOut == null) {
+            // alert user to select check in and check out dates
+            JOptionPane.showMessageDialog(null, "Please select check in and check out dates.");
+            return;
+        }
+
+        //check if selected dates fit in the season
+        Season season = (Season) seasonComboBox.getSelectedItem();
+
+        if (season == null) {
+            JOptionPane.showMessageDialog(null, "Please select a season.");
+            return;
+        }
+
+        if (checkIn.isBefore(season.getStartDateLocalDate())
+                || checkOut.isAfter(season.getEndDateLocalDate())) {
+            JOptionPane.showMessageDialog(null, "Selected dates do not fit in the season.");
+            return;
+        }
+
+        if (checkIn.isAfter(checkOut)) {
+            JOptionPane.showMessageDialog(null, "Check in date cannot be after check out date.");
+            return;
+        }
+
+        // check if room is available
+        Room room = (Room) roomComboBox.getSelectedItem();
+
+        if (room == null) {
+            JOptionPane.showMessageDialog(null, "Please select a room.");
+        }
+
+        // get all reservations for the room
+        List<Reservation> reservationsExists = reservationController.getByRoomId(room.getId());
+
+        for (Reservation reservationExists : reservationsExists) {
+
+            if (reservationExists.getId() == reservation.getId()) {
+                continue;
+            }
+
+            // is there any reservation that star before the new reservation and ends after the new reservation
+            if (reservationExists.getCheckInLocalDate().isBefore(checkIn) && reservationExists.getCheckOutLocalDate().isAfter(checkOut)) {
+                JOptionPane.showMessageDialog(null, "Room is not available for the selected dates.");
+                return;
+            }
+            // is there any reservation that starts after the new reservation and ends after the new reservation
+            if (reservationExists.getCheckInLocalDate().isAfter(checkIn) && reservationExists.getCheckOutLocalDate().isAfter(checkOut)) {
+                JOptionPane.showMessageDialog(null, "Room is not available for the selected dates.");
+                return;
+            }
+            // is there any reservation that starts before the new reservation and ends before the new reservation
+            if (reservationExists.getCheckInLocalDate().isBefore(checkIn) && reservationExists.getCheckOutLocalDate().isBefore(checkOut)) {
+                JOptionPane.showMessageDialog(null, "Room is not available for the selected dates.");
+                return;
+            }
+            // is there any reservation that starts after the new reservation and ends before the new reservation
+            if (reservationExists.getCheckInLocalDate().isAfter(checkIn) && reservationExists.getCheckOutLocalDate().isBefore(checkOut)) {
+                JOptionPane.showMessageDialog(null, "Room is not available for the selected dates.");
+                return;
+            }
+        }
+
+        // if no reservation is found, the room is available
+        JOptionPane.showMessageDialog(null, "Room is available for the selected dates.");
+    }
+
+    private Boolean checkRoomAvailabilitySelectedRoom(Room room) {
+        // check date fits in the season
+        LocalDate checkIn = reservation.getCheckInLocalDate();
+        LocalDate checkOut = reservation.getCheckOutLocalDate();
+
+        if (checkIn == null || checkOut == null) {
+            // alert user to select check in and check out dates
+            return false;
+        }
+
+        //check if selected dates fit in the season
+        Season season = (Season) seasonComboBox.getSelectedItem();
+
+        if (season == null) {
+            return false;
+        }
+
+        if (checkIn.isBefore(season.getStartDateLocalDate())
+                || checkOut.isAfter(season.getEndDateLocalDate())) {
+            return false;
+
+        }
+
+        if (checkIn.isAfter(checkOut)) {
+            return false;
+
+        }
+
+        // check if room is available
+
+        // get all reservations for the room
+        List<Reservation> reservationsExists = reservationController.getByRoomId(room.getId());
+
+        System.out.println("the size of the reservationsExists is " + reservationsExists.size());
+
+        for (Reservation reservationExists : reservationsExists) {
+
+
+            if (reservationExists.getId() == reservation.getId()) {
+                continue;
+            }
+
+
+            // is there any reservation that star before the new reservation and ends after the new reservation
+            if (reservationExists.getCheckInLocalDate().isBefore(checkIn) && reservationExists.getCheckOutLocalDate().isAfter(checkOut)) {
+                return false;
+
+            }
+            // is there any reservation that starts after the new reservation and ends after the new reservation
+            if (reservationExists.getCheckInLocalDate().isAfter(checkIn) && reservationExists.getCheckOutLocalDate().isAfter(checkOut)) {
+                return false;
+
+            }
+            // is there any reservation that starts before the new reservation and ends before the new reservation
+            if (reservationExists.getCheckInLocalDate().isBefore(checkIn) && reservationExists.getCheckOutLocalDate().isBefore(checkOut)) {
+                return false;
+
+            }
+            // is there any reservation that starts after the new reservation and ends before the new reservation
+            if (reservationExists.getCheckInLocalDate().isAfter(checkIn) && reservationExists.getCheckOutLocalDate().isBefore(checkOut)) {
+                return false;
+
+            }
+
+        }
+
+        return true;
+    }
+
+    private void refreshRoomComboBox() {
+        Room selectedRoom = (Room) roomComboBox.getSelectedItem();
+        rooms = roomController.getByHotelAndSeasonIdAndPansionId(reservation.getHotelId(), reservation.getSeasonId(),
+                reservation.getPansionId());
+
+        DefaultComboBoxModel<Room> roomComboBoxModel = new DefaultComboBoxModel<>(rooms.toArray(new Room[0]));
+
+        for (Room room : rooms) {
+            if (checkRoomAvailabilitySelectedRoom(room)) {
+                roomComboBoxModel.addElement(room);
+            }
+        }
+
+        roomComboBox.setModel(roomComboBoxModel);
+        roomComboBox.setSelectedItem(selectedRoom);
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(DetailsView::new);

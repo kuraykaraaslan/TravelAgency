@@ -1,5 +1,9 @@
 package org.agency.entities;
 
+import org.agency.controllers.ReservationController;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Room {
@@ -53,6 +57,11 @@ public class Room {
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
     }
+
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = String.valueOf(roomNumber);
+    }
+
 
     public String getType() {
         return type;
@@ -229,6 +238,21 @@ public class Room {
     public void setPansionId(int pansionId) {
         this.pansionId = pansionId;
     }
+
+    public Boolean isRoomAvailableAtDates(LocalDate startDate, LocalDate endDate) {
+        //GET ALL RESERVATIONS FOR THIS ROOM
+        ReservationController reservationController = new ReservationController();
+        ArrayList<Reservation> reservations = reservationController.getByRoomId(this.id);
+
+        //CHECK IF ROOM IS AVAILABLE
+        for (Reservation reservation : reservations) {
+            if (reservation.getCheckInLocalDate().isBefore(endDate) && reservation.getCheckOutLocalDate().isAfter(startDate)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     @Override
     public String toString() {

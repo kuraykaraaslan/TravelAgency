@@ -233,8 +233,8 @@ public class UserDao {
             offset = 0;
         }
 
-        String query = "SELECT * FROM users WHERE name LIKE ? OR username LIKE ? OR email LIKE ? LIMIT ? OFFSET ?";
-        String countQuery = "SELECT COUNT(*) FROM users WHERE name LIKE ? OR username LIKE ? OR email LIKE ?";
+        String query = "SELECT * FROM users WHERE name LIKE ? OR username LIKE ? OR role LIKE ? OR email LIKE ? LIMIT ? OFFSET ?";
+        String countQuery = "SELECT COUNT(*) FROM users WHERE name LIKE ? OR username LIKE ? OR role LIKE ? OR email LIKE ?";
 
         try (
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -242,12 +242,14 @@ public class UserDao {
             preparedStatement.setString(1, "%" + keyword + "%");
             preparedStatement.setString(2, "%" + keyword + "%");
             preparedStatement.setString(3, "%" + keyword + "%");
-            preparedStatement.setInt(4, limit);
-            preparedStatement.setInt(5, offset);
+            preparedStatement.setString(4, "%" + keyword + "%");
+            preparedStatement.setInt(5, limit);
+            preparedStatement.setInt(6, offset);
 
             countStatement.setString(1, "%" + keyword + "%");
             countStatement.setString(2, "%" + keyword + "%");
             countStatement.setString(3, "%" + keyword + "%");
+            countStatement.setString(4, "%" + keyword + "%");
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
