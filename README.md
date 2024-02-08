@@ -143,7 +143,7 @@ Include screenshots here to visually showcase the application's interface and fe
     - Added room search feature as RoomListView.
     - Added links to hotel details from the reservation details
     - Added links to room details from the reservation details
-    - Added links to season details from the hotel details
+    - Added links to season details from the reservation details
     - Added availability check for rooms in the reservation details
     - Added Role search feature as UserListView
     - Bug Fixed: Pansion selection for the room added
