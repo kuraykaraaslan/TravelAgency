@@ -40,29 +40,34 @@ public class MainView {
         mainBox.add(Box.createVerticalStrut(20)); // Add some vertical space between logo and buttons
 
         JButton ReservationsButton = new JButton("Reservations");
+        JButton roomsButton = new JButton("Rooms");
         JButton usersButton = new JButton("Users");
         JButton hotelsButton = new JButton("Hotels");
         JButton exitButton = new JButton("Exit");
 
         // Set a preferred width for the buttons
-        Dimension buttonSize = new Dimension(300, 40);
+        Dimension buttonSize = new Dimension(350, 40);
         ReservationsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        roomsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         usersButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         hotelsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         ReservationsButton.setMaximumSize(buttonSize);
+        roomsButton.setMaximumSize(buttonSize);
         usersButton.setMaximumSize(buttonSize);
         hotelsButton.setMaximumSize(buttonSize);
         exitButton.setMaximumSize(buttonSize);
 
         ReservationsButton.setPreferredSize(buttonSize);
+        roomsButton.setPreferredSize(buttonSize);
         usersButton.setPreferredSize(buttonSize);
         hotelsButton.setPreferredSize(buttonSize);
         exitButton.setPreferredSize(buttonSize);
 
         // Add action listeners to the buttons
         ReservationsButton.addActionListener(e -> new org.agency.views.reservation.ListView());
+        roomsButton.addActionListener(e -> new org.agency.views.room.ListView());
         hotelsButton.addActionListener(e -> new org.agency.views.hotel.ListView());
         usersButton.addActionListener(e -> new org.agency.views.user.ListView());
         exitButton.addActionListener(e -> System.exit(0));
@@ -76,6 +81,9 @@ public class MainView {
         // Add vertical gaps between buttons
         mainBox.add(Box.createVerticalGlue());
         mainBox.add(ReservationsButton);
+        //
+        mainBox.add(Box.createVerticalGlue());
+        mainBox.add(roomsButton);
         //
         mainBox.add(Box.createVerticalStrut(10)); // Add vertical gap
         mainBox.add(hotelsButton);

@@ -63,8 +63,8 @@ public class SeasonsPartialView {
         nameLabel.setPreferredSize(new Dimension(40, 30));
         nameLabel.setMaximumSize(new Dimension(40, 30));
         nameLabel.setMinimumSize(new Dimension(40, 30));
-        headerSearchPanel.add(nameLabel);
-        headerSearchPanel.add(nameField);
+        //headerSearchPanel.add(nameLabel);
+        //headerSearchPanel.add(nameField);
 
         DatePicker startDateField = new DatePicker();
         startDateField.setPreferredSize(new Dimension(200, 30));
@@ -75,8 +75,8 @@ public class SeasonsPartialView {
         startDateLabel.setPreferredSize(new Dimension(40, 30));
         startDateLabel.setMaximumSize(new Dimension(40, 30));
         startDateLabel.setMinimumSize(new Dimension(40, 30));
-        headerSearchPanel.add(startDateLabel);
-        headerSearchPanel.add(startDateField);
+        //headerSearchPanel.add(startDateLabel);
+        //headerSearchPanel.add(startDateField);
 
         DatePicker endDateField = new DatePicker();
         endDateField.setPreferredSize(new Dimension(200, 30));
@@ -87,10 +87,10 @@ public class SeasonsPartialView {
         endDateLabel.setPreferredSize(new Dimension(40, 30));
         endDateLabel.setMaximumSize(new Dimension(40, 30));
         endDateLabel.setMinimumSize(new Dimension(40, 30));
-        headerSearchPanel.add(endDateLabel);
-        headerSearchPanel.add(endDateField);
+        //headerSearchPanel.add(endDateLabel);
+        //headerSearchPanel.add(endDateField);
 
-        JButton searchButton = new JButton("Search");
+        JButton searchButton = new JButton("Refresh");
         searchButton.setPreferredSize(new Dimension(100, 30));
         searchButton.setMaximumSize(new Dimension(100, 30));
         searchButton.setMinimumSize(new Dimension(100, 30));

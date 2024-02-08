@@ -1,5 +1,8 @@
 package org.agency.entities;
 
+import org.agency.controllers.RoomController;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Hotel {
@@ -212,7 +215,14 @@ public class Hotel {
         this.deletedBy = deletedBy;
     }
 
-    // toString method (optional)
+    // getRooms
+
+    public ArrayList<Room> getRooms() {
+        ArrayList<Room> rooms = new ArrayList<Room>();
+        RoomController roomController = new RoomController();
+        rooms = roomController.getByHotelId(this.id);
+        return rooms;
+    }
 
     @Override
     public String toString() {

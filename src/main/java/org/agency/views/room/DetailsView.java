@@ -309,12 +309,13 @@ public class DetailsView {
         // seasonId ComboBox
 
         JPanel seasonIdPanel = new JPanel();
-        JLabel seasonIdLabel = new JLabel("Season Id");
+        JLabel seasonIdLabel = new JLabel("Season");
         seasonIdLabel.setPreferredSize(labelDimension);
 
         ArrayList<Season> seasons = (ArrayList<Season>) seasonController.getAllByHotelId(room.getHotelId());
         // model
         seasonModel = new DefaultComboBoxModel<>();
+
 
 
         for (Season season : seasons) {
@@ -338,6 +339,7 @@ public class DetailsView {
         };
 
         seasonComboBox = new JComboBox<>(seasonModel);
+        seasonComboBox.setPreferredSize(fieldDimension);
 
         seasonComboBox.setRenderer(seasonRenderer);
 
@@ -393,6 +395,7 @@ public class DetailsView {
         };
 
         JComboBox<Pansion> pansionComboBox = new JComboBox<>(pansionModel);
+        pansionComboBox.setPreferredSize(fieldDimension);
 
         pansionComboBox.setRenderer(pansionRenderer);
 

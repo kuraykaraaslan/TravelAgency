@@ -44,7 +44,7 @@ public class DetailsView {
     }
 
     private void configureFrame(JFrame frame) {
-        this.frame.setSize(350, 400);
+        this.frame.setSize(350, 300);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setIconImage(new ImageIcon("src/main/resources/icon.png").getImage());
@@ -53,9 +53,6 @@ public class DetailsView {
         mainPanel.setLayout(new GridLayout(0, 1));
 
         // Panels
-        mainPanel.add(hotelIdPanel());
-
-        mainPanel.add(namePanel());
 
         /*
          * private boolean breakfast;
@@ -68,6 +65,99 @@ public class DetailsView {
          * 
          * checkboxs
          */
+
+        JPanel hotelIdPanel = new JPanel();
+        hotelIdPanel.setLayout(new FlowLayout());
+
+        JLabel hotelIdLabel = new JLabel("Hotel Name");
+        hotelIdLabel.setPreferredSize(new Dimension(100, 30));
+
+        // get hotels from database
+        List<Hotel> hotels = hotelController.getAll();
+
+        // create model and add hotels to it
+        DefaultComboBoxModel<Hotel> model = new DefaultComboBoxModel<>();
+
+        for (Hotel hotel : hotels) {
+            model.addElement(hotel.getId() == 0 ? new Hotel() : hotel);
+        }
+
+        // custom renderer
+        ListCellRenderer<? super Hotel> renderer = new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+                if (value instanceof Hotel) {
+                    Hotel hotel = (Hotel) value;
+                    setText(hotel.getName());
+                }
+                return this;
+            }
+        };
+
+        JComboBox<Hotel> hotelIdField = new JComboBox<>(model);
+
+        hotelIdField.setRenderer(renderer);
+
+        if (pansion.getId() == 0) {
+            hotelIdField.setSelectedIndex(0);
+        } else {
+            hotelIdField.setSelectedItem(hotelController.getById(pansion.getHotelId()));
+        }
+
+        hotelIdField.setPreferredSize(new Dimension(200, 30));
+
+        hotelIdField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                JComboBox<?> cb = (JComboBox<?>) evt.getSource();
+                Hotel hotel = (Hotel) cb.getSelectedItem();
+                if (hotel != null) {
+                    pansion.setHotelId(hotel.getId());
+                    System.out.println(pansion.getHotelId());
+                }
+            }
+        });
+
+        hotelIdPanel.add(hotelIdLabel);
+        hotelIdPanel.add(hotelIdField);
+        //mainPanel.add(hotelIdPanel);
+
+        // name
+        JPanel namePanel = new JPanel();
+        namePanel.setLayout(new FlowLayout());
+        JLabel nameLabel = new JLabel("Name");
+        nameLabel.setPreferredSize(labelDimension);
+        // JTextField nameField = new JTextField(pansion.getName(), 20);
+
+        // ('BED_AND_BREAKFAST', 'HALF_BOARD', 'FULL_BOARD', 'ALL_INCLUSIVE',
+        // 'ULTRA_ALL_INCLUSIVE', 'BED_ONLY' , 'ALL_INCLUSIVE_NO_ALCOHOL'
+
+        JComboBox nameField = new JComboBox(new String[] { "BED_AND_BREAKFAST", "HALF_BOARD", "FULL_BOARD",
+                "ALL_INCLUSIVE", "ULTRA_ALL_INCLUSIVE", "BED_ONLY", "ALL_INCLUSIVE_NO_ALCOHOL" });
+
+        // select first
+        nameField.setSelectedIndex(0);
+        nameField.setPreferredSize(new Dimension(200, 30));
+        nameField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                JComboBox cb = (JComboBox) evt.getSource();
+                String name = (String) cb.getSelectedItem();
+                System.out.println(name);
+                pansion.setName(name);
+            }
+        });
+
+        if (pansion.getId() != 0) {
+            nameField.setSelectedItem(pansion.getName());
+        }
+
+        namePanel.add(nameLabel);
+        namePanel.add(nameField);
+
+        mainPanel.add(namePanel);
 
         JPanel CheckBoxPanel = new JPanel();
         CheckBoxPanel.setLayout(new GridLayout(0, 2));
@@ -243,8 +333,15 @@ public class DetailsView {
 
             public void actionPerformed(ActionEvent evt) {
 
-                if (pansion.getName().equals("")) {
+                pansion.setName((String) nameField.getSelectedItem());
+
+                if (nameField.getSelectedItem() == null) {
                     JOptionPane.showMessageDialog(null, "Name is required");
+                    return;
+                }
+
+                if (hotelIdField.getSelectedItem() == null) {
+                    JOptionPane.showMessageDialog(null, "Hotel is required");
                     return;
                 }
 
@@ -274,105 +371,6 @@ public class DetailsView {
         frame.add(mainPanel);
     }
 
-    // Name Panel
-    private JPanel namePanel() {
-        JPanel namePanel = new JPanel();
-        namePanel.setLayout(new FlowLayout());
-        JLabel nameLabel = new JLabel("Name");
-        nameLabel.setPreferredSize(labelDimension);
-        // JTextField nameField = new JTextField(pansion.getName(), 20);
-
-        // ('BED_AND_BREAKFAST', 'HALF_BOARD', 'FULL_BOARD', 'ALL_INCLUSIVE',
-        // 'ULTRA_ALL_INCLUSIVE', 'BED_ONLY' , 'ALL_INCLUSIVE_NO_ALCOHOL'
-
-        JComboBox nameField = new JComboBox(new String[] { "BED_AND_BREAKFAST", "HALF_BOARD", "FULL_BOARD",
-                "ALL_INCLUSIVE", "ULTRA_ALL_INCLUSIVE", "BED_ONLY", "ALL_INCLUSIVE_NO_ALCOHOL" });
-
-        // select first
-        nameField.setSelectedIndex(0);
-        nameField.setPreferredSize(new Dimension(200, 30));
-        nameField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                JComboBox cb = (JComboBox) evt.getSource();
-                String name = (String) cb.getSelectedItem();
-                System.out.println(name);
-                pansion.setName(name);
-            }
-        });
-
-        if (pansion.getId() != 0) {
-            nameField.setSelectedItem(pansion.getName());
-        }
-
-        namePanel.add(nameLabel);
-        namePanel.add(nameField);
-
-        return namePanel;
-    }
-
-    // Description Panel
-    // Hotel ID Panel
-    private JPanel hotelIdPanel() {
-        JPanel hotelIdPanel = new JPanel();
-        hotelIdPanel.setLayout(new FlowLayout());
-
-        JLabel hotelIdLabel = new JLabel("Hotel Name");
-        hotelIdLabel.setPreferredSize(new Dimension(100, 30));
-
-        // get hotels from database
-        List<Hotel> hotels = hotelController.getAll();
-
-        // create model and add hotels to it
-        DefaultComboBoxModel<Hotel> model = new DefaultComboBoxModel<>();
-
-        for (Hotel hotel : hotels) {
-            model.addElement(hotel.getId() == 0 ? new Hotel() : hotel);
-        }
-
-        // custom renderer
-        ListCellRenderer<? super Hotel> renderer = new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                    boolean isSelected, boolean cellHasFocus) {
-
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-                if (value instanceof Hotel) {
-                    Hotel hotel = (Hotel) value;
-                    setText(hotel.getName());
-                }
-                return this;
-            }
-        };
-
-        JComboBox<Hotel> hotelIdField = new JComboBox<>(model);
-
-        hotelIdField.setRenderer(renderer);
-
-        if (pansion.getId() == 0) {
-            hotelIdField.setSelectedIndex(0);
-        } else {
-            hotelIdField.setSelectedItem(hotelController.getById(pansion.getHotelId()));
-        }
-
-        hotelIdField.setPreferredSize(new Dimension(200, 30));
-
-        hotelIdField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                JComboBox<?> cb = (JComboBox<?>) evt.getSource();
-                Hotel hotel = (Hotel) cb.getSelectedItem();
-                if (hotel != null) {
-                    pansion.setHotelId(hotel.getId());
-                    System.out.println(pansion.getHotelId());
-                }
-            }
-        });
-
-        hotelIdPanel.add(hotelIdLabel);
-        hotelIdPanel.add(hotelIdField);
-
-        return hotelIdPanel;
-    }
 
     public static void main(String[] args) {
         DetailsView viewPansion = new DetailsView();

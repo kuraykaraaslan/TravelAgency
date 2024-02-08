@@ -1,5 +1,6 @@
 package org.agency.entities;
 
+import org.agency.controllers.HotelController;
 import org.agency.controllers.ReservationController;
 
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ public class Room {
 
     private int pansionId;
 
+
     // Constructors
 
     public Room() {
@@ -41,6 +43,11 @@ public class Room {
     }
 
     // Getters and Setters
+
+    public Hotel getHotel() {
+        HotelController hotelController = new HotelController();
+        return hotelController.getById(this.hotelId);
+    }
 
     public int getId() {
         return id;

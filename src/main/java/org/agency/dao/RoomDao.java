@@ -69,7 +69,7 @@ public class RoomDao {
         String query = "SELECT * FROM rooms ORDER BY id ASC";
 
         try (Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(query)) {
+             ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 rooms.add(mapResultSetToRoom(resultSet));
             }
@@ -325,4 +325,144 @@ public class RoomDao {
 
         return rooms;
     }
+
+    ///getAllWithHotelJoin
+    public ArrayList<Room> getAllHotelJoinedByFilters(HashMap<String, Object> filters) {
+
+        ArrayList<Room> rooms = new ArrayList<>();
+        String query = "SELECT *  FROM rooms r JOIN hotels h ON r.hotel_id = h.id WHERE ";
+
+
+        if (filters.containsKey("room_number")) {
+            query += "r.room_number LIKE '%" + filters.get("room_number") + "%' AND ";
+        }
+
+        if (filters.containsKey("type")) {
+            query += "r.type LIKE '%" + filters.get("type") + "%' AND ";
+        }
+
+        if (filters.containsKey("double_bed_count")) {
+            query += "r.double_bed_count >= " + filters.get("double_bed_count") + " AND ";
+        }
+
+        if (filters.containsKey("single_bed_count")) {
+            query += "r.single_bed_count >= " + filters.get("single_bed_count") + " AND ";
+        }
+
+        if (filters.containsKey("adult_price")) {
+            query += "r.adult_price <= " + filters.get("adult_price") + " AND ";
+        }
+
+        if (filters.containsKey("child_price")) {
+            query += "r.child_price <= " + filters.get("child_price") + " AND ";
+        }
+
+        if (filters.containsKey("square_meters")) {
+            query += "r.square_meters >= " + filters.get("square_meters") + " AND ";
+        }
+
+        if (filters.containsKey("has_television") && (boolean) filters.get("has_television")) {
+            query += "r.has_television = true AND ";
+        }
+
+        if (filters.containsKey("has_balcony") && (boolean) filters.get("has_balcony")) {
+            query += "r.has_balcony = true AND ";
+        }
+
+        if (filters.containsKey("has_air_conditioning") && (boolean) filters.get("has_air_conditioning")) {
+            query += "r.has_air_conditioning = true AND ";
+        }
+
+        if (filters.containsKey("has_minibar") && (boolean) filters.get("has_minibar")) {
+            query += "r.has_minibar = true AND ";
+        }
+
+        if (filters.containsKey("has_valuables_safe") && (boolean) filters.get("has_valuables_safe")) {
+            query += "r.has_valuables_safe = true AND ";
+        }
+
+        if (filters.containsKey("has_gaming_console") && (boolean) filters.get("has_gaming_console")) {
+            query += "r.has_gaming_console = true AND ";
+        }
+
+        if (filters.containsKey("has_projector") && (boolean) filters.get("has_projector")) {
+            query += "r.has_projector = true AND ";
+        }
+
+        if (filters.containsKey("hotel_name")) {
+            query += "h.name LIKE '%" + filters.get("hotel_name") + "%' AND ";
+        }
+
+        if (filters.containsKey("star_rating")) {
+            query += "h.star_rating >= " + filters.get("star_rating") + " AND ";
+        }
+
+        if (filters.containsKey("address_city")) {
+            query += "h.address_city LIKE '%" + filters.get("address_city") + "%' AND ";
+        }
+
+        if (filters.containsKey("address_country")) {
+            query += "h.address_country LIKE '%" + filters.get("address_country") + "%' AND ";
+        }
+
+        if (filters.containsKey("address_district")) {
+            query += "h.address_district LIKE '%" + filters.get("address_district") + "%' AND ";
+        }
+
+        if (filters.containsKey("has_car_park") && (boolean) filters.get("has_car_park")) {
+            query += "h.has_car_park = true AND ";
+        }
+
+        if (filters.containsKey("has_restaurant") && (boolean) filters.get("has_restaurant")) {
+            query += "h.has_restaurant = true AND ";
+        }
+
+        if (filters.containsKey("has_pool") && (boolean) filters.get("has_pool")) {
+            query += "h.has_pool = true AND ";
+        }
+
+        if (filters.containsKey("has_concierge") && (boolean) filters.get("has_concierge")) {
+            query += "h.has_concierge = true AND ";
+        }
+
+        if (filters.containsKey("has_spa") && (boolean) filters.get("has_spa")) {
+            query += "h.has_spa = true AND ";
+        }
+
+        if (filters.containsKey("has_room_service") && (boolean) filters.get("has_room_service")) {
+            query += "h.has_room_service = true AND ";
+        }
+
+
+        // remove the last AND
+        if (query.endsWith("AND ")) {
+            query = query.substring(0, query.length() - 5);
+        } else {
+            query = query.substring(0, query.length() - 6);
+        }
+
+
+        System.out.println(query);
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    rooms.add(mapResultSetToRoom(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+
+        return rooms;
+
+    }
+
 }
+
+
+
+
+
+
+

@@ -233,8 +233,12 @@ public class UserDao {
             offset = 0;
         }
 
-        String query = "SELECT * FROM users WHERE name LIKE ? OR username LIKE ? OR role LIKE ? OR email LIKE ? LIMIT ? OFFSET ?";
-        String countQuery = "SELECT COUNT(*) FROM users WHERE name LIKE ? OR username LIKE ? OR role LIKE ? OR email LIKE ?";
+        //String query = "SELECT * FROM users WHERE name LIKE ? OR username LIKE ? OR role LIKE ? OR email LIKE ? LIMIT ? OFFSET ?";
+        //String countQuery = "SELECT COUNT(*) FROM users WHERE name LIKE ? OR username LIKE ? OR role LIKE ? OR email LIKE ?";
+
+        String query = "SELECT * FROM users WHERE LOWER(name) LIKE LOWER(?) OR LOWER(username) LIKE LOWER(?) OR LOWER(role) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) LIMIT ? OFFSET ?";
+        String countQuery = "SELECT COUNT(*) FROM users WHERE LOWER(name) LIKE LOWER(?) OR LOWER(username) LIKE LOWER(?) OR LOWER(role) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?)";
+
 
         try (
                 PreparedStatement preparedStatement = connection.prepareStatement(query);

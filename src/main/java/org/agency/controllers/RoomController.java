@@ -3,6 +3,7 @@ package org.agency.controllers;
 import org.agency.core.PaginatedResult;
 import org.agency.dao.RoomDao;
 import org.agency.entities.Room;
+import org.agency.entities.Season;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class RoomController {
 
-    private RoomDao  roomDao;
+    private RoomDao roomDao;
 
     public RoomController() {
         roomDao = new RoomDao();
@@ -88,12 +89,32 @@ public class RoomController {
         return true;
     }
 
+    public boolean isDatesValid(int roomId, LocalDate startDate, LocalDate endDate) {
+        //Get Room by id
+        Room room = getById(roomId);
+
+        //get season id
+        SeasonController seasonController = new SeasonController();
+        Season season = seasonController.getById(room.getSeasonId());
+
+        //COMPARE DATES WITH SEASON DATES
+        if (startDate.isBefore(season.getStartDateLocalDate()) || endDate.isAfter(season.getEndDateLocalDate())) {
+            return false;
+
+        }
+        return true;
+    }
+
     public ArrayList<Room> getByHotelAndSeasonIdAndPansionId(int hotelId, int seasonId, int pansionId) {
         return roomDao.getByHotelAndSeasonIdAndPansionId(hotelId, seasonId, pansionId);
     }
 
+
     public ArrayList<Room> getByFilters(HashMap<String, Object> filters) {
         return roomDao.getByFilters(filters);
     }
-}
 
+    public ArrayList<Room> getAllHotelJoinedByFilters(HashMap<String, Object> filters) {
+        return roomDao.getAllHotelJoinedByFilters(filters);
+    }
+}

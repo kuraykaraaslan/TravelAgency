@@ -122,6 +122,8 @@ The project uses Swing for the graphical user interface, providing a user-friend
 
 Include screenshots here to visually showcase the application's interface and features.
 
+![Welcome](/static/welcome.png)
+![All Rooms](/static/all_rooms.png)
 ![All Reservations](/static/all_reservations.png)
 ![Reservation Details](/static/reservation_details.png)
 ![All Hotels](/static/all_hotels.png)
@@ -131,6 +133,21 @@ Include screenshots here to visually showcase the application's interface and fe
 ![Hotel Seasons](/static/hotel_seasons.png)
 ![Hotel Pensions](/static/hotel_pensions.png)
 ![Hotel Reservations](/static/hotel_reservations.png)
+
+
+## Change Log
+
+- **v1.0.0** (2024-02-01)
+    - Initial release
+- **v1.0.1** (2024-02-02)
+    - Added room search feature as RoomListView.
+    - Added links to hotel details from the reservation details
+    - Added links to room details from the reservation details
+    - Added links to season details from the hotel details
+    - Added availability check for rooms in the reservation details
+    - Added Role search feature as UserListView
+    - Bug Fixed: Pansion selection for the room added
+
 
 
 ## Contributing

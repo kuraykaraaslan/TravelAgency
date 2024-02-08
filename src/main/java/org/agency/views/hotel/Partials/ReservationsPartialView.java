@@ -215,6 +215,10 @@ public class ReservationsPartialView {
         createButton.setMinimumSize(new Dimension(100, 30));
         createButton.setToolTipText("Create");
         createButton.addActionListener(e -> {
+            if (hotel.getRooms().size() == 0) {
+                JOptionPane.showMessageDialog(null, "Create a room first to create a reservation");
+                return;
+            }
             Reservation reservation = new Reservation();
             reservation.setHotelId(hotel.getId());
             org.agency.views.reservation.DetailsView detailsView = new org.agency.views.reservation.DetailsView(
